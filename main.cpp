@@ -95,7 +95,7 @@ void SDL::draw()
 
 int main( int argc, char * argv[] )
 {
-    try
+    try // check SDL error
     {
         SDL sdl( SDL_INIT_VIDEO | SDL_INIT_TIMER );
         sdl.draw();
