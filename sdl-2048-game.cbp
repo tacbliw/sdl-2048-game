@@ -13,6 +13,8 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="-lSDL2_ttf" />
+					<Add directory="include" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -22,6 +24,8 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-lSDL2_ttf" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -30,12 +34,14 @@
 		</Build>
 		<Compiler>
 			<Add option="`sdl2-config --cflags`" />
-			<Add option="-Wall" />
 		</Compiler>
 		<Linker>
+			<Add option="-lSDL2_ttf" />
 			<Add option="`sdl2-config --libs`" />
 		</Linker>
+		<Unit filename="include/Font.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Font.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

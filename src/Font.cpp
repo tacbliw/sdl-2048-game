@@ -1,29 +1,35 @@
 #include "Font.h"
 #include <iostream>
 
-Font::Font()
+FontHandler::FontHandler()
 {
     m_font = NULL;
 }
 
-Font::~Font()
+FontHandler::~FontHandler()
 {
 
 }
 
-Font::init(const char* path_to_ttf, int size)
+void FontHandler::init(const char* path_to_ttf, int size)
 {
+    // first, clear the current font
     free();
-
+    // initialize new font
     m_font = TTF_OpenFont(path_to_ttf, size);
 
     if (!m_font)
     {
-        std::cout << "Load font failed: " << path_to_ttf << endl;
+        std::cout << "Failed loading font: " << path_to_ttf << std::endl;
+        std::cout << "Error: " << TTF_GetError() << std::endl;
+    }
+    else
+    {
+        std::cout << "Font loaded: " << path_to_ttf << std::endl;
     }
 }
 
-Font::free()
+void FontHandler::free()
 {
     if (m_font)
     {
@@ -32,7 +38,7 @@ Font::free()
     }
 }
 
-SDL_Surface Font::renderText(const char* text, SDL_Color fg_color)
+SDL_Surface * FontHandler::renderText(const char* text, SDL_Color fg_color)
 {
-    return TTF_RenderText_Blended(m_font, text, fg_color);
+    return TTF_RenderText_Blended(this->m_font, text, fg_color);
 }

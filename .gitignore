@@ -33,3 +33,5 @@
 
 # SDL files
 *.layout
+*.depend
+
