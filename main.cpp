@@ -15,7 +15,6 @@ int main( int argc, char * argv[] )
     SDL_Event event;
 
     Window window("Testing", 800, 600);
-
     while (!quit)
     {
         SDL_WaitEvent(&event);
