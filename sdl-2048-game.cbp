@@ -40,8 +40,10 @@
 			<Add option="`sdl2-config --libs`" />
 		</Linker>
 		<Unit filename="include/Font.h" />
+		<Unit filename="include/Window.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Font.cpp" />
+		<Unit filename="src/Window.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
