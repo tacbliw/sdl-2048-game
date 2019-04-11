@@ -41,11 +41,11 @@
 			<Add option="`sdl2-config --libs`" />
 			<Add directory="C:/mingw_dev_lib/lib" />
 		</Linker>
+		<Unit filename="include/Block.h" />
 		<Unit filename="include/Font.h" />
-		<Unit filename="include/Window.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Block.cpp" />
 		<Unit filename="src/Font.cpp" />
-		<Unit filename="src/Window.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

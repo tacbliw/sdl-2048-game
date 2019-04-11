@@ -4,11 +4,11 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-class FontHandler
+class Font
 {
     public:
-        FontHandler();
-        virtual ~FontHandler();
+        Font();
+        virtual ~Font();
 
         void init(const char *path_to_ttf, int size);
         void free();

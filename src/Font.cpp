@@ -1,17 +1,17 @@
 #include "Font.h"
 #include <iostream>
 
-FontHandler::FontHandler()
+Font::Font()
 {
     m_font = NULL;
 }
 
-FontHandler::~FontHandler()
+Font::~Font()
 {
 
 }
 
-void FontHandler::init(const char* path_to_ttf, int size)
+void Font::init(const char* path_to_ttf, int size)
 {
     // first, clear the current font
     free();
@@ -29,7 +29,7 @@ void FontHandler::init(const char* path_to_ttf, int size)
     }
 }
 
-void FontHandler::free()
+void Font::free()
 {
     if (m_font)
     {
@@ -38,7 +38,7 @@ void FontHandler::free()
     }
 }
 
-SDL_Surface * FontHandler::renderText(const char* text, SDL_Color fg_color)
+SDL_Surface * Font::renderText(const char* text, SDL_Color fg_color)
 {
     return TTF_RenderText_Blended(this->m_font, text, fg_color);
 }
