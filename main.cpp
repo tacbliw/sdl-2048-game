@@ -9,7 +9,6 @@
 
 int main( int argc, char * argv[] )
 {
-<<<<<<< HEAD
     /**
         Your code go here
     */
