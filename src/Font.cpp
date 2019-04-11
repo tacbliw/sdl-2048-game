@@ -38,7 +38,7 @@ void Font::free()
     }
 }
 
-SDL_Surface * Font::renderText(const char* text, SDL_Color fg_color)
+SDL_Surface *Font::renderText(const char* text, SDL_Color fg_color)
 {
     return TTF_RenderText_Blended(this->m_font, text, fg_color);
 }

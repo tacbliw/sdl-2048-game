@@ -43,13 +43,16 @@
 		</Linker>
 		<Unit filename="include/Block.h" />
 		<Unit filename="include/Font.h" />
+		<Unit filename="include/SDLUtils.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Block.cpp" />
 		<Unit filename="src/Font.cpp" />
+		<Unit filename="src/SDLUtils.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
 			<debugger />
+			<fortran_project />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

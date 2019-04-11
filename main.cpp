@@ -5,10 +5,18 @@
 
 // Game Libraries
 #include "Font.h"
-
-using namespace std;
+#include "SDLUtils.h"
 
 int main( int argc, char * argv[] )
 {
+    /**
+        Your code go here
+    */
+
+    /**
+        Test area
+    */
+    if (!InitSDL())
+        return 1;
     return 0;
 }
