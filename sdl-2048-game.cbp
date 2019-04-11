@@ -37,23 +37,14 @@
 			<Add directory="C:/mingw_dev_lib/include/SDL2" />
 		</Compiler>
 		<Linker>
-<<<<<<< HEAD
 			<Add option="-lmingw32 -lSDL2main -lSDL2  -lSDL2_ttf  -lSDL2_image" />
-=======
-			<Add option="-lmingw32 -lSDL2main -lSDL2  -lSDL2_ttf" />
-			<Add option="`sdl2-config --libs`" />
->>>>>>> cd9e1df9e943b785789e5d8a884edd4d4743043b
 			<Add directory="C:/mingw_dev_lib/lib" />
 		</Linker>
 		<Unit filename="include/Font.h" />
-		<Unit filename="include/Render.h" />
 		<Unit filename="include/SDLUtils.h" />
-		<Unit filename="include/Window.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Font.cpp" />
-		<Unit filename="src/Render.cpp" />
 		<Unit filename="src/SDLUtils.cpp" />
-		<Unit filename="src/Window.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

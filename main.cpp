@@ -13,15 +13,6 @@ int main( int argc, char * argv[] )
     /**
         Your code go here
     */
-=======
-    bool quit = false;
-    SDL_Event event;
-
-    Window window("Testing", 800, 600);
-    while (!quit)
-    {
-        SDL_WaitEvent(&event);
->>>>>>> cd9e1df9e943b785789e5d8a884edd4d4743043b
 
     /**
         Test area
