@@ -34,20 +34,26 @@
 		</Build>
 		<Compiler>
 			<Add option="`sdl2-config --cflags`" />
+			<Add directory="C:/mingw_dev_lib/include/SDL2" />
 		</Compiler>
 		<Linker>
-			<Add option="-lSDL2_ttf" />
-			<Add option="`sdl2-config --libs`" />
+			<Add option="-lmingw32 -lSDL2main -lSDL2  -lSDL2_ttf  -lSDL2_image" />
+			<Add directory="C:/mingw_dev_lib/lib" />
 		</Linker>
 		<Unit filename="include/Font.h" />
+		<Unit filename="include/Render.h" />
+		<Unit filename="include/SDLUtils.h" />
 		<Unit filename="include/Window.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Font.cpp" />
+		<Unit filename="src/Render.cpp" />
+		<Unit filename="src/SDLUtils.cpp" />
 		<Unit filename="src/Window.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
 			<debugger />
+			<fortran_project />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

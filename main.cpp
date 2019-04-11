@@ -5,28 +5,18 @@
 
 // Game Libraries
 #include "Font.h"
-#include "Window.h"
-
-using namespace std;
+#include "SDLUtils.h"
 
 int main( int argc, char * argv[] )
 {
-    bool quit = false;
-    SDL_Event event;
+    /**
+        Your code go here
+    */
 
-    Window window("Testing", 800, 600);
-
-    while (!quit)
-    {
-        SDL_WaitEvent(&event);
-
-        switch(event.type)
-        {
-        case SDL_QUIT:
-            quit = true;
-            break;
-        }
-    }
-    SDL_Quit();
+    /**
+        Test area
+    */
+    if (!InitSDL())
+        return 1;
     return 0;
 }
