@@ -2,13 +2,14 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
+#include "Render.h"
 #include <stdio.h>
 
 extern const int  SCREEN_WIDTH = 700;
 extern const int SCREEN_HEIGHT = 640;
 
-static SDL_Window *g_window = NULL;
-static SDL_Renderer *g_renderer = NULL;
+static SDL_Window *gWindow = NULL;
+static SDL_Renderer *gRenderer = NULL;
 
 bool InitSDL()
 {
@@ -27,7 +28,7 @@ bool InitSDL()
             printf("Linear texture filtering not enable, so what ?...\n");
         }
 
-        g_window = SDL_CreateWindow(
+        gWindow = SDL_CreateWindow(
                                     "2048",
                                     SDL_WINDOWPOS_UNDEFINED,
                                     SDL_WINDOWPOS_UNDEFINED,
@@ -35,19 +36,19 @@ bool InitSDL()
                                     SCREEN_HEIGHT,
                                     SDL_WINDOW_SHOWN
                                     );
-        if (g_window == NULL)
+        if (gWindow == NULL)
         {
             printf("could not create window with error%s\n", SDL_GetError());
             success = false;
         }
         else
         {
-            g_renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-            if (g_renderer == NULL)
+            gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+            if (gRenderer == NULL)
             {
                 printf("could not create renderer with error: %s\n", SDL_GetError());
             }
-            //g_render.init(g_renderer);
+            gRender.setRenderer(gRenderer);
             int iFlags = IMG_INIT_PNG;
             if (!IMG_Init(iFlags) & iFlags)
             {
@@ -67,10 +68,10 @@ bool InitSDL()
 
 void CloseSDL()
 {
-    SDL_DestroyRenderer(g_renderer);
-    g_renderer = NULL;
-    SDL_DestroyWindow(g_window);
-    g_window = NULL;
+    SDL_DestroyRenderer(gRenderer);
+    gRenderer = NULL;
+    SDL_DestroyWindow(gWindow);
+    gWindow = NULL;
 
     TTF_Quit();
     IMG_Quit();
