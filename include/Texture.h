@@ -9,8 +9,8 @@
 class Texture
 {
     public:
-        SDL_Texture *loadTexture(std::string path);
-        SDL_Texture *loadTextureFromText(Font *f, const char *text, SDL_Color fgColor);
+        bool loadTexture(std::string path);
+        bool loadTextureFromText(Font *f, const char *text, SDL_Color fgColor);
 
         void render(int x, int y, SDL_Rect *clip = NULL);
 
@@ -18,7 +18,9 @@ class Texture
         int getWidth() { return mWidth; }
         int getHeight() { return mHeight; }
 
-        void setAsRenderTarget(SDL_Texture *texture);
+        void setAsRenderTarget();
+        bool createBlankTexture(Uint32 format, int access, int width, int height);
+        void setBlendMode();
     private:
         SDL_Texture* mTexture;
         int mHeight;

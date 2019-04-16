@@ -11,6 +11,11 @@ extern const int SCREEN_HEIGHT = 640;
 static SDL_Window *gWindow = NULL;
 static SDL_Renderer *gRenderer = NULL;
 
+/** @brief Standard SDL initialization.
+ *
+ * @return bool
+ *
+ */
 bool InitSDL()
 {
     bool success = true;
@@ -66,6 +71,11 @@ bool InitSDL()
     return success;
 }
 
+/** @brief Standard SDL destruction.
+ *
+ * @return bool
+ *
+ */
 void CloseSDL()
 {
     SDL_DestroyRenderer(gRenderer);

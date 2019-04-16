@@ -15,7 +15,7 @@ class Font
         SDL_Surface* renderText(const char* str, SDL_Color fg_color);
 
     private:
-        TTF_Font *m_font;
+        TTF_Font *mFont;
 };
 
 #endif // FONT_H

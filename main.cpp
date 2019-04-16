@@ -7,6 +7,9 @@
 #include "Font.h"
 #include "SDLUtils.h"
 #include "Render.h"
+#include "Block.h"
+#include "BlockBoard.h"
+#include "Game.h"
 
 int main( int argc, char * argv[] )
 {
@@ -19,13 +22,28 @@ int main( int argc, char * argv[] )
     */
     if (InitSDL())
     {
-        SDL_Color _t = {0xFF, 0x00, 0x00, 0xFF};
-        gRender.setDrawColor(_t);
-        gRender.drawRect(10, 10, 10, 10);
-        SDL_RenderPresent(gRender.getRenderer());
+        loadBlockMetadata();
+        gRender.setDrawColor({255, 255, 255});
+        gRender.clear();
+        Game *g = new Game();
+        g->init(4);
+        g->getBlockBoard()->setPosition((SCREEN_WIDTH - g->getBlockBoard()->getWidth())/2,
+                                        (SCREEN_HEIGHT - g->getBlockBoard()->getWidth())/2);
+        g->render();
+        gRender.present();
     }
 
-    SDL_Delay( 2000 );
+    bool quit = false;
+    SDL_Event e;
+    while (!quit)
+    {
+        while (SDL_PollEvent(&e))
+        {
+            if(e.type == SDL_QUIT)
+                quit = true;
+        }
+    }
+    CloseSDL();
 
 
     return 0;

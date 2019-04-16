@@ -1,6 +1,11 @@
 #include <map>
+#include <stdio.h>
+#include <sstream>
 
 #include "Block.h"
+#include "Texture.h"
+#include "Render.h"
+#include "Font.h"
 
 
 /** Small change to help the game run smoother.
@@ -63,10 +68,10 @@ SDL_Color backgroundColors[] = {
 
 SDL_Color BLACK = {0, 0, 0};
 
-/** \brief Get background color for a block.
+/** @brief Get background color for a block.
  *
- * \param blockValue current value of the block.
- * \return  SDL_Color for the block background,
+ * @param blockValue current value of the block.
+ * @return  SDL_Color for the block background,
  *  if blockValue > 65536, return BLACK {0, 0, 0}.
  */
 SDL_Color getBlockBackgroundColor(int blockValue)
@@ -95,10 +100,10 @@ SDL_Color textColors[] = {
 };
 
 
-/** \brief Get text color for a block.
+/** @brief Get text color for a block.
  *
- * \param blockValue current value of the block.
- * \return SDL_Color for the block text.
+ * @param blockValue current value of the block.
+ * @return SDL_Color for the block text.
  *
  * All blocks that have value greater than 4 will have WHITE text.
  */
@@ -145,30 +150,30 @@ void initBlockStyle()
 }
 
 //=============== COORDINATE ================
-/** \brief Calculate SDL position x and y from coordinate of
+/** @brief Calculate SDL position x and y from coordinate of
  *  the block in 4x4 block board.
  *
- * \param posX, posY coordinates of block in 4x4 block board.
- * \param *x, *y SDL coordinate
- * \return nothing, but change *x and *y to the right number.
+ * @param row, col coordinates of block in 4x4 block board.
+ * @param *x, *y SDL coordinate
+ * @return nothing, but change *x and *y to the right number.
  *
  */
 int blockSize = 100;
 int gridSpacing = 15;
 
-void calPosFromXY(int posX, int posY, int *x, int *y)
+void calPosFromXY(int row, int col, int *x, int *y)
 {
-    *x = posX * (blockSize + gridSpacing);
-    *y = posY * (blockSize + gridSpacing);
+    *x = row * (blockSize + gridSpacing);
+    *y = col * (blockSize + gridSpacing);
 }
 
 //================ METADATA =================
-/** \brief Two function to help load and unload metadata.
+/** @brief Two function to help load and unload metadata.
  *
  *  Load and unload includes fonts, animations.
  */
 
-void loadBlockMetadata()
+extern void loadBlockMetadata()
 {
     const char *fontFile = "Fonts/OpenSans-Bold.ttf";
     fontInit(fontFile);
@@ -180,7 +185,7 @@ void loadBlockMetadata()
 
 }
 
-void unloadBlockMetadata()
+extern void unloadBlockMetadata()
 {
     fontFree();
 
@@ -190,9 +195,36 @@ void unloadBlockMetadata()
 }
 
 //============ CLASS ATTRIBUTES =============
-Block::Block(int posX, int posY, int value)
+Block::Block(int row, int col, int value)
 {
-    this->posX = posX;
-    this->posY = posY;
+    this->row = row;
+    this->col = col;
     this->value = value;
+    loadBlockMetadata();
+    calPosFromXY(row, col, &mX, &mY);
+    mTextInBlockTexture = new Texture();
+    mBlockTexture = new Texture();
+}
+
+/** @brief Render block
+ *
+ * @param x: x position
+ * @param y: y position
+ *
+ */
+void Block::render(int x, int y)
+{
+    std::stringstream ss;
+    ss << get_value();
+    mTextInBlockTexture->loadTextureFromText(&numberLarge, ss.str().c_str(), getBlockTextColor(get_value()));
+    mBlockTexture->createBlankTexture(SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, blockSize, blockSize);
+
+    mBlockTexture->setAsRenderTarget();
+    gRender.setDrawColor(getBlockBackgroundColor(get_value()));
+    gRender.clear();
+    mTextInBlockTexture->render((blockSize - mTextInBlockTexture->getWidth())/2, (blockSize - mTextInBlockTexture->getHeight())/2, NULL);
+
+    gRender.setRenderTarget(NULL);
+    mBlockTexture->render(x + mX, y + mY, NULL);
+    //gRender.present();
 }

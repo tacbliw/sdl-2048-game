@@ -14,6 +14,7 @@ class Render
         void drawRect(int x, int y, int width, int height);
         void fillRect(int x, int y, int width, int height);
         void present();
+        void setRenderTarget(SDL_Texture *texture);
 
     private:
         SDL_Renderer *mRenderer;

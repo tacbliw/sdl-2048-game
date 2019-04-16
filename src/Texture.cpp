@@ -7,7 +7,7 @@
   *
   *
   */
-SDL_Texture* Texture::loadTexture(std::string path)
+bool Texture::loadTexture(std::string path)
 {
     SDL_Texture *newTexture = NULL;
     SDL_Surface *loadSurface = IMG_Load(path.c_str());
@@ -30,14 +30,15 @@ SDL_Texture* Texture::loadTexture(std::string path)
         SDL_FreeSurface(loadSurface);
     }
 
-    return newTexture;
+    mTexture = newTexture;
+    return mTexture == NULL;
 }
 
 /** @brief Load texture from text
   *
   *
   */
-SDL_Texture* Texture::loadTextureFromText(Font *f, const char *text, SDL_Color fgColor)
+bool Texture::loadTextureFromText(Font *f, const char *text, SDL_Color fgColor)
 {
     SDL_Texture *newTexture = NULL;
     SDL_Surface *textSurface = f->renderText(text, fgColor);
@@ -60,13 +61,13 @@ SDL_Texture* Texture::loadTextureFromText(Font *f, const char *text, SDL_Color f
         SDL_FreeSurface(textSurface);
     }
 
-    return newTexture;
+    mTexture = newTexture;
+    return (mTexture == NULL);
 }
 
 
-/** @brief (one liner)
+/** @brief Render clip to current texture
   *
-  * (documentation goes here)
   */
 void Texture::render(int x, int y, SDL_Rect *clip)
 {
@@ -80,13 +81,35 @@ void Texture::render(int x, int y, SDL_Rect *clip)
     SDL_RenderCopy(gRender.getRenderer(), mTexture, clip, &renderQuad);
 }
 
-/** @brief (one liner)
+/** @brief Set texture to render
   *
   * (documentation goes here)
   */
-void Texture::setAsRenderTarget(SDL_Texture *texture)
+void Texture::setAsRenderTarget()
 {
-    SDL_SetRenderTarget(gRender.getRenderer(), texture);
+    SDL_SetRenderTarget(gRender.getRenderer(), mTexture);
 }
 
+/** @brief Create blank texture
+ *
+ */
+bool Texture::createBlankTexture(Uint32 format, int access, int width, int height)
+{
+    mTexture = SDL_CreateTexture(gRender.getRenderer(), format, access, width, height);
+    if (mTexture == NULL)
+    {
+        printf("cant create blank texture...");
+        return 0;
+    }
+    else
+    {
+        mWidth = width;
+        mHeight = height;
+    }
+    return 1;
+}
 
+void Texture::setBlendMode()
+{
+    SDL_SetTextureBlendMode(mTexture, SDL_BLENDMODE_BLEND);
+}
