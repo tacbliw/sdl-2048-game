@@ -26,6 +26,9 @@ class Block
         int get_col() { return col; }
         int get_value() { return value; }
 
+        void set_row(int row) { this->row = row; }
+        void set_col(int col) { this->col = col; }
+        void set_value(int value) { this->value = value; }
 
         void render(int x, int y);
 

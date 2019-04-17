@@ -16,15 +16,16 @@ class Game
         Game();
         virtual ~Game();
         void init(int size);
-        std::vector<int> getEmptyBlocks();
+        std::vector< std::vector<Block> > blankGrid();
         void addRandomBlock();
         void render();
         BlockBoard* getBlockBoard() { return mBlockBoard; }
+
     protected:
 
     private:
         int mSize;
-        Block **mBlock;
+        std::vector< std::vector<Block> > mBlock;
         friend class BlockBoard;
         BlockBoard *mBlockBoard;
 

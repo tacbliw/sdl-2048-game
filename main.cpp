@@ -25,7 +25,7 @@ int main( int argc, char * argv[] )
         loadBlockMetadata();
         gRender.setDrawColor({255, 255, 255});
         gRender.clear();
-        Game *g = new Game();
+        Game *g = new Game;
         g->init(4);
         g->getBlockBoard()->setPosition((SCREEN_WIDTH - g->getBlockBoard()->getWidth())/2,
                                         (SCREEN_HEIGHT - g->getBlockBoard()->getWidth())/2);
