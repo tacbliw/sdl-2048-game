@@ -1,10 +1,13 @@
 #include "Game.h"
+#include <iostream>
 #include <algorithm>
 #include <utility>
 #include <random>
 #include <vector>
 #include <stdio.h>
 #include <time.h>
+
+struct Position {int row; int col;};
 
 Game::Game()
 {
@@ -27,12 +30,14 @@ void Game::init(int size)
     mSize = size;
 
     int len = size * size;
-    mBlock = new Block*[len];
     mBlockBoard = new BlockBoard(this);
-    std::fill(mBlock, mBlock + len, nullptr);
+
+    mBlock = blankGrid();
 
     addRandomBlock();
     addRandomBlock();
+    addRandomBlock();
+
 
     /*for (int i = 0; i < mSize * mSize; i++)
     {
@@ -42,23 +47,24 @@ void Game::init(int size)
 
 }
 
-/** @brief Get empty block
+/** \brief Create an empty 4x4 grid filled with zeros
  *
- * @return std::vector <int>
- *  Iterate through all block, if one is nullptr then push back to result array.
+ * \return std::vector< std::vector<Block>>
+ *
  */
-std::vector<int> Game::getEmptyBlocks()
+std::vector< std::vector<Block> > Game::blankGrid()
 {
-    std::vector<int> emptyBlocks;
-    for (int i = 0; i < mSize * mSize; i++)
+    std::vector< std::vector<Block> > grid(4, std::vector<Block>(4, Block(0, 0, 0)));
+    for (int i = 0; i < 4; i++)
     {
-        if (mBlock[i] == nullptr)
+        for (int j = 0; j < 4; j++)
         {
-            printf("block %d is empty\n", i);
-            emptyBlocks.push_back(i);
+            Block newBlock(i, j, 0);
+            grid[i][j] = newBlock;
         }
     }
-    return std::move(emptyBlocks);
+
+    return grid;
 }
 
 /** @brief Add random block
@@ -68,21 +74,28 @@ std::vector<int> Game::getEmptyBlocks()
  */
 void Game::addRandomBlock()
 {
-    std::vector<int> emptyBlocks = getEmptyBlocks();
-    if (emptyBlocks.empty())
+    srand(time(NULL));
+    std::vector <Position> blanks;
+    for (int i = 0; i < 4; i++)
     {
-        return;
+        for (int j = 0; j < 4; j++)
+        {
+            if (mBlock[i][j].get_value() == 0)
+            {
+                Position p = {i, j};
+                blanks.push_back(p);
+            }
+        }
     }
 
-    //std::random_device rd;
-    //std::mt19937 mt(rd());
-    //std::uniform_int_distribution<int> dist(0, emptyBlocks.size() - 1);
-    srand(time(NULL));
-    auto cell = emptyBlocks[rand() % (emptyBlocks.size() - 1)];
+    if (!blanks.empty())
+    {
+        int randomNumber = rand();
+        int randomPosition = randomNumber % blanks.size();
+        randomNumber = rand();
 
-    int value = (rand() % (emptyBlocks.size() - 1)) % 2 ? 2 : 4;
-    Block *block = new Block(cell / mSize, cell % mSize, value);
-    mBlock[cell] = block;
+        mBlock[blanks[randomPosition].row][blanks[randomPosition].col].set_value(randomNumber % 2 ? 2 : 4);
+    }
 }
 
 
