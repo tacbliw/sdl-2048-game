@@ -33,6 +33,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++11" />
 			<Add option="`sdl2-config --cflags`" />
 			<Add directory="C:/mingw_dev_lib/include/SDL2" />
 		</Compiler>
