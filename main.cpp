@@ -20,23 +20,22 @@ int main( int argc, char * argv[] )
     /**
         Test area
     */
-    InitSDL();
-        loadBlockMetadata();
-        gRender.setDrawColor({255, 255, 255});
-        gRender.clear();
-        Game *g = new Game;
-        g->init(4);
-        g->getBlockBoard()->setPosition((SCREEN_WIDTH - g->getBlockBoard()->getWidth())/2,
-                                        (SCREEN_HEIGHT - g->getBlockBoard()->getWidth())/2);
-        g->render();
-        gRender.present();
-        g->printBoard();
-        printf("\n");
+    if (!InitSDL()) return 0;
+    loadBlockMetadata();
+    gRender.setDrawColor({255, 255, 255});
+    gRender.clear();
+    Game *g = new Game;
+    g->init(4);
+    g->getBlockBoard()->setPosition((SCREEN_WIDTH - g->getBlockBoard()->getWidth())/2,
+                                    (SCREEN_HEIGHT - g->getBlockBoard()->getWidth())/2);
+    g->render();
+    gRender.present();
+    g->printBoard();
+    printf("\n");
 
 
     bool quit = false;
     SDL_Event event;
-    int prevKey = SDL_SCANCODE_ESCAPE;
     while (!quit)
     {
 
@@ -50,19 +49,27 @@ int main( int argc, char * argv[] )
             case SDL_KEYDOWN:
                 switch (event.key.keysym.scancode)
                 {
-                case SDL_SCANCODE_SPACE:
-                    g->rotateClockWise();
+                case SDL_SCANCODE_UP:
+                    g->up();
                     break;
-                case SDL_SCANCODE_RETURN:
-                    g->addRandomBlock();
+                case SDL_SCANCODE_DOWN:
+                    g->down();
                     break;
+                case SDL_SCANCODE_LEFT:
+                    g->left();
+                    break;
+                case SDL_SCANCODE_RIGHT:
+                    g->right();
+                    break;
+                default:
+                    printf("Unhandled key\n");
                 }
                 break;
             }
+            g->render();
+            gRender.present();
         }
 
-            g->render();
-        gRender.present();
     }
     CloseSDL();
 

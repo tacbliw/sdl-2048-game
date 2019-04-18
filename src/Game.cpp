@@ -156,17 +156,14 @@ void Game::leftShiftGrid()
         mergeAndSum(i);
         leftShiftLine(i);
     }
-    addRandomBlock();
-    printBoard();
-    std::cout << "\n";
 }
 
-/** \brief rotate the board 90 degrees clockwise.
+/** \brief rotate the board 90 degrees counter clockwise.
  *
  * \return void
  *
  */
-void Game::rotateClockWise()
+void Game::rotateLeft()
 {
     std::vector< std::vector<Block> > copyBoard(mSize, std::vector<Block>(mSize, Block(0, 0, 0)));
     int row = 0;
@@ -180,22 +177,68 @@ void Game::rotateClockWise()
             copyBoard[i][j].set_row(i);
             copyBoard[i][j].set_col(j);
         }
-        col++;
+        col--;
         row = 0;
     }
     mBlock = copyBoard;
 }
 
+//================= DEBUG =========================
 void Game::printBoard()
 {
     for (int i = 0; i < mSize; i++)
     {
         for (int j = 0; j < mSize; j++)
         {
-            std::cout << mBlock[i][j].get_value() << " (" << mBlock[i][j].get_row() << ", " << mBlock[i][j].get_col() << ") ";
+            std::cout << mBlock[i][j].get_value() << " ";/*
+                      << " (" << mBlock[i][j].get_row()
+                      << ", " << mBlock[i][j].get_col()
+                      << ") ";*/
         }
         std::cout << "\n";
     }
+    std::cout << "\n";
+}
+
+//=================== GAME ===================
+void Game::up()
+{
+    rotateLeft();
+    leftShiftGrid();
+    rotateLeft();
+    rotateLeft();
+    rotateLeft();
+    addRandomBlock();
+    printBoard();
+}
+
+void Game::down()
+{
+    rotateLeft();
+    rotateLeft();
+    rotateLeft();
+    leftShiftGrid();
+    rotateLeft();
+    addRandomBlock();
+    printBoard();
+}
+
+void Game::left()
+{
+    leftShiftGrid();
+    addRandomBlock();
+    printBoard();
+}
+
+void Game::right()
+{
+    rotateLeft();
+    rotateLeft();
+    leftShiftGrid();
+    rotateLeft();
+    rotateLeft();
+    addRandomBlock();
+    printBoard();
 }
 
 /** @brief Render board game.

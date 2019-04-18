@@ -22,11 +22,18 @@ class Game
 
         void leftShiftLine(int lineIndex);
         void mergeAndSum(int lineIndex);
+
         void leftShiftGrid();
-        void rotateClockWise();
+        void rotateLeft();
 
         //debug
         void printBoard();
+
+        // Playing
+        void up();
+        void down();
+        void left();
+        void right();
 
         BlockBoard* getBlockBoard() { return mBlockBoard; }
         void render();
