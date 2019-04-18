@@ -16,10 +16,20 @@ class Game
         Game();
         virtual ~Game();
         void init(int size);
+
         std::vector< std::vector<Block> > blankGrid();
         void addRandomBlock();
-        void render();
+
+        void leftShiftLine(int lineIndex);
+        void mergeAndSum(int lineIndex);
+        void leftShiftGrid();
+        void rotateClockWise();
+
+        //debug
+        void printBoard();
+
         BlockBoard* getBlockBoard() { return mBlockBoard; }
+        void render();
 
     protected:
 

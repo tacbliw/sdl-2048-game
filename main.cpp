@@ -20,8 +20,7 @@ int main( int argc, char * argv[] )
     /**
         Test area
     */
-    if (InitSDL())
-    {
+    InitSDL();
         loadBlockMetadata();
         gRender.setDrawColor({255, 255, 255});
         gRender.clear();
@@ -31,17 +30,39 @@ int main( int argc, char * argv[] )
                                         (SCREEN_HEIGHT - g->getBlockBoard()->getWidth())/2);
         g->render();
         gRender.present();
-    }
+        g->printBoard();
+        printf("\n");
+
 
     bool quit = false;
-    SDL_Event e;
+    SDL_Event event;
+    int prevKey = SDL_SCANCODE_ESCAPE;
     while (!quit)
     {
-        while (SDL_PollEvent(&e))
+
+        while (SDL_PollEvent(&event))
         {
-            if(e.type == SDL_QUIT)
+            switch (event.type)
+            {
+            case SDL_QUIT:
                 quit = true;
+                break;
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.scancode)
+                {
+                case SDL_SCANCODE_SPACE:
+                    g->rotateClockWise();
+                    break;
+                case SDL_SCANCODE_RETURN:
+                    g->addRandomBlock();
+                    break;
+                }
+                break;
+            }
         }
+
+            g->render();
+        gRender.present();
     }
     CloseSDL();
 
