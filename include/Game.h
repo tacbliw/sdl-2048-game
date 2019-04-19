@@ -17,7 +17,7 @@ class Game
         virtual ~Game();
         void init(int size);
 
-        std::vector< std::vector<Block> > blankGrid();
+        std::vector< std::vector<Block*> > blankGrid();
         void addRandomBlock();
 
         void leftShiftLine(int lineIndex);
@@ -42,7 +42,7 @@ class Game
 
     private:
         int mSize;
-        std::vector< std::vector<Block> > mBlock;
+        std::vector< std::vector<Block*> > mBlock;
         friend class BlockBoard;
         BlockBoard *mBlockBoard;
 

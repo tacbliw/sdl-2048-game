@@ -61,14 +61,17 @@ int main( int argc, char * argv[] )
                 case SDL_SCANCODE_RIGHT:
                     g->right();
                     break;
+                case SDL_SCANCODE_SPACE:
+                    g->addRandomBlock();
+                    break;
                 default:
                     printf("Unhandled key\n");
                 }
                 break;
             }
-            g->render();
-            gRender.present();
         }
+        g->render();
+        gRender.present();
 
     }
     CloseSDL();
