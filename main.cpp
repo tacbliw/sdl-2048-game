@@ -66,6 +66,7 @@ int main( int argc, char * argv[] )
             break;
         }
         g->render();
+        gRender.present();
     }
     CloseSDL();
 

@@ -163,8 +163,8 @@ int gridSpacing = 15;
 
 void calPosFromXY(int row, int col, int *x, int *y)
 {
-    *x = row * (blockSize + gridSpacing);
-    *y = col * (blockSize + gridSpacing);
+    *x = col * (blockSize + gridSpacing);
+    *y = row * (blockSize + gridSpacing);
 }
 
 //================ METADATA =================
