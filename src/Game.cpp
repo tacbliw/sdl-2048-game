@@ -34,9 +34,10 @@ void Game::init(int size)
 
     mBlock = blankGrid();
 
-    addRandomBlock();
-    addRandomBlock();
-    addRandomBlock();
+    mBlock[1][1]->set_value(2);
+    //addRandomBlock();
+    //addRandomBlock();
+
 
 
     /*for (int i = 0; i < mSize * mSize; i++)
@@ -52,15 +53,14 @@ void Game::init(int size)
  * \return std::vector< std::vector<Block>>
  *
  */
-std::vector< std::vector<Block> > Game::blankGrid()
+std::vector< std::vector<Block *> > Game::blankGrid()
 {
-    std::vector< std::vector<Block> > grid(4, std::vector<Block>(4, Block(0, 0, 0)));
+    std::vector< std::vector<Block *> > grid(4, std::vector<Block *>(4, new Block(0, 0, 0)));
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            Block newBlock(i, j, 0);
-            grid[i][j] = newBlock;
+            grid[i][j] = new Block(i, j, 0);
         }
     }
 
@@ -80,7 +80,7 @@ void Game::addRandomBlock()
     {
         for (int j = 0; j < 4; j++)
         {
-            if (mBlock[i][j].get_value() == 0)
+            if (mBlock[i][j]->get_value() == 0)
             {
                 Position p = {i, j};
                 blanks.push_back(p);
@@ -94,7 +94,7 @@ void Game::addRandomBlock()
         int randomPosition = randomNumber % blanks.size();
         randomNumber = rand();
 
-        mBlock[blanks[randomPosition].row][blanks[randomPosition].col].set_value(randomNumber % 2 ? 2 : 4);
+        mBlock[blanks[randomPosition].row][blanks[randomPosition].col]->set_value(randomNumber % 2 ? 2 : 4);
     }
 }
 
@@ -107,4 +107,25 @@ void Game::addRandomBlock()
 void Game::render()
 {
     mBlockBoard->render(mBlock);
+}
+
+void Game::move(DIR dir)
+{
+    printf("moved + %d\n", dir);
+    mBlock[1][1]->planMove(1, 3);
+    //mBlock[1][1]->set_value(0);
+    //mBlock[1][3]->set_value(2);
+}
+
+void Game::update(int delta_ms)
+{
+    //printf("update every time\n");
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            if (mBlock[i][j]->get_value() != 0)
+                mBlock[i][j]->update(delta_ms);
+        }
+    }
 }

@@ -23,7 +23,7 @@ BlockBoard::BlockBoard(Game *pGame)
  * First calculate the grid size, then draw a gridSize x gridSize rectangle, then draw holder for block.
  *
  */
-void BlockBoard::render(std::vector< std::vector<Block> > block)
+void BlockBoard::render(std::vector< std::vector<Block*> > block)
 {
     const int gridSize = this->getWidth();
 
@@ -50,9 +50,9 @@ void BlockBoard::render(std::vector< std::vector<Block> > block)
     {
         for (int j = 0; j < m_pGame->mSize; j++)
         {
-            if (block[i][j].get_value() != 0)
+            if (block[i][j]->get_value() != 0)
             {
-                block[i][j].render(mX + gridSpacing, mY + gridSpacing);
+                block[i][j]->render(mX + gridSpacing, mY + gridSpacing);
             }
         }
     }

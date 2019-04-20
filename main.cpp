@@ -31,19 +31,46 @@ int main( int argc, char * argv[] )
                                         (SCREEN_HEIGHT - g->getBlockBoard()->getWidth())/2);
         g->render();
         gRender.present();
+
+        bool quit = false;
+        SDL_Event e;
+        Uint32 ticks = SDL_GetTicks();
+        while (!quit)
+        {
+            while (SDL_PollEvent(&e))
+            {
+                if(e.type == SDL_QUIT)
+                    quit = true;
+                else if (e.type == SDL_KEYDOWN)
+                {
+                    switch (e.key.keysym.sym)
+                    {
+                    case SDLK_UP:
+                        g->move(UP);
+                        break;
+                    case SDLK_RIGHT:
+                        g->move(RIGHT);
+                        break;
+                    case SDLK_DOWN:
+                        g->move(DOWN);
+                        break;
+                    case SDLK_LEFT:
+                        g->move(LEFT);
+                        break;
+                    }
+                }
+            }
+            Uint32 new_ticks = SDL_GetTicks();
+            int delta_ms = new_ticks - ticks;
+            ticks = new_ticks;
+            g->render();
+            gRender.present();
+            g->update(delta_ms);
+        }
+        CloseSDL();
     }
 
-    bool quit = false;
-    SDL_Event e;
-    while (!quit)
-    {
-        while (SDL_PollEvent(&e))
-        {
-            if(e.type == SDL_QUIT)
-                quit = true;
-        }
-    }
-    CloseSDL();
+
 
 
     return 0;
