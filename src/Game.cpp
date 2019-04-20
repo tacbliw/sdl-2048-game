@@ -36,16 +36,6 @@ void Game::init(int size)
     previousMBlock = std::vector< std::vector<int> >(mSize, std::vector<int>(mSize, 0));
 
     addRandomBlock();
-    addRandomBlock();
-    addRandomBlock();
-
-
-    /*for (int i = 0; i < mSize * mSize; i++)
-    {
-        if (mBlock[i] != nullptr)
-            printf("%d ", mBlock[i]->get_value());
-    }*/
-
 }
 
 //=================== SUPPORT FUNCTIONS ================
@@ -215,8 +205,6 @@ void Game::rotateLeft()
         for (int j = 0; j < mSize; j++)
         {
             copyBoard[i][j] = mBlock[row++][col];
-            copyBoard[i][j]->set_row(i);
-            copyBoard[i][j]->set_col(j);
         }
         col--;
         row = 0;
@@ -235,8 +223,6 @@ void Game::rotateRight()
         for (int j = 0; j < mSize; j++)
         {
             copyBoard[i][j] = mBlock[row--][col];
-            copyBoard[i][j]->set_row(i);
-            copyBoard[i][j]->set_col(j);
         }
         row = mSize - 1;
         col++;
@@ -251,10 +237,10 @@ void Game::printBoard()
     {
         for (int j = 0; j < mSize; j++)
         {
-            std::cout << mBlock[i][j]->get_value() << " ";/*
-                      << " (" << mBlock[i][j]->get_row()
-                      << ", " << mBlock[i][j]->get_col()
-                      << ") ";*/
+            std::cout << mBlock[i][j]->get_value() << " ";
+//                      << " (" << mBlock[i][j]->get_row()
+//                      << ", " << mBlock[i][j]->get_col()
+//                      << ") ";
         }
         std::cout << "\n";
     }
@@ -295,6 +281,15 @@ void Game::movementExecute(SDL_Scancode sdlKeyScancode)
     if (gridChanged())
     {
         addRandomBlock();
+        for (int i = 0; i < mSize; i++)
+        {
+            for (int j = 0; j < mSize; j++)
+            {
+                mBlock[i][j]->set_row(i);
+                mBlock[i][j]->set_col(j);
+                mBlock[i][j]->updateMPosition();
+            }
+        }
     }
     printBoard();
 }

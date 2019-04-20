@@ -167,6 +167,12 @@ void calPosFromXY(int row, int col, int *x, int *y)
     *y = row * (blockSize + gridSpacing);
 }
 
+void Block::updateMPosition()
+{
+    mX = col * (blockSize + gridSpacing);
+    mY = row * (blockSize + gridSpacing);
+}
+
 //================ METADATA =================
 /** @brief Two function to help load and unload metadata.
  *
