@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <SDL.h>
+#include <windows.h>
 
 // Game Libraries
 #include "Font.h"
@@ -36,43 +37,35 @@ int main( int argc, char * argv[] )
 
     bool quit = false;
     SDL_Event event;
-    while (!quit)
+    while (!quit && SDL_WaitEvent(&event))
     {
-
-        while (SDL_PollEvent(&event))
+        switch (event.type)
         {
-            switch (event.type)
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.scancode)
             {
-            case SDL_QUIT:
-                quit = true;
+            case SDL_SCANCODE_UP:
+                g->movementExecute(SDL_SCANCODE_UP);
                 break;
-            case SDL_KEYDOWN:
-                switch (event.key.keysym.scancode)
-                {
-                case SDL_SCANCODE_UP:
-                    g->up();
-                    break;
-                case SDL_SCANCODE_DOWN:
-                    g->down();
-                    break;
-                case SDL_SCANCODE_LEFT:
-                    g->left();
-                    break;
-                case SDL_SCANCODE_RIGHT:
-                    g->right();
-                    break;
-                case SDL_SCANCODE_SPACE:
-                    g->addRandomBlock();
-                    break;
-                default:
-                    printf("Unhandled key\n");
-                }
+            case SDL_SCANCODE_DOWN:
+                g->movementExecute(SDL_SCANCODE_DOWN);
+                break;
+            case SDL_SCANCODE_LEFT:
+                g->movementExecute(SDL_SCANCODE_LEFT);
+                break;
+            case SDL_SCANCODE_RIGHT:
+                g->movementExecute(SDL_SCANCODE_RIGHT);
+                break;
+            default:
+                printf("Unhandled key\n");
                 break;
             }
+            break;
+        case SDL_QUIT:
+            quit = true;
+            break;
         }
         g->render();
-        gRender.present();
-
     }
     CloseSDL();
 
