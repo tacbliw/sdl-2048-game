@@ -26,7 +26,7 @@ void Font::init(const char* path_to_ttf, int size)
     }
     else
     {
-        std::cout << "Font loaded: " << path_to_ttf << std::endl;
+        //std::cout << "Font loaded: " << path_to_ttf << std::endl;
     }
 }
 

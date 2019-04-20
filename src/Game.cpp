@@ -33,40 +33,67 @@ void Game::init(int size)
     mBlockBoard = new BlockBoard(this);
 
     mBlock = blankGrid();
+    previousMBlock = std::vector< std::vector<int> >(mSize, std::vector<int>(mSize, 0));
 
     addRandomBlock();
-    addRandomBlock();
-    addRandomBlock();
-
-
-    /*for (int i = 0; i < mSize * mSize; i++)
-    {
-        if (mBlock[i] != nullptr)
-            printf("%d ", mBlock[i]->get_value());
-    }*/
-
 }
 
+//=================== SUPPORT FUNCTIONS ================
 /** \brief Create an empty 4x4 grid filled with zeros
  *
  * \return std::vector< std::vector<Block>>
  *
  */
-std::vector< std::vector<Block> > Game::blankGrid()
+std::vector< std::vector<Block*> > Game::blankGrid()
 {
-    std::vector< std::vector<Block> > grid(4, std::vector<Block>(4, Block(0, 0, 0)));
-    for (int i = 0; i < 4; i++)
+    std::vector< std::vector<Block*> > grid(mSize, std::vector<Block*>(mSize, nullptr));
+    for (int i = 0; i < mSize; i++)
     {
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < mSize; j++)
         {
-            Block newBlock(i, j, 0);
-            grid[i][j] = newBlock;
+            grid[i][j] = new Block(i, j, 0);
         }
     }
 
     return grid;
 }
 
+/** \brief store a copy of values in current mBlock.
+ *
+ * \return void
+ *
+ */
+void Game::storeGrid()
+{
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            previousMBlock[i][j] = mBlock[i][j]->get_value();
+        }
+    }
+}
+
+/** \brief Compare mBlock with previousMBlock, return true if different.
+ *
+ * \return bool
+ *
+ */
+bool Game::gridChanged()
+{
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            if (mBlock[i][j]->get_value() != previousMBlock[i][j])
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+//=============== GAME BEHAVIOURS ==================
 /** @brief Add random block
  *
  * @return void
@@ -76,11 +103,11 @@ void Game::addRandomBlock()
 {
     srand(time(NULL));
     std::vector <Position> blanks;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < mSize; i++)
     {
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < mSize; j++)
         {
-            if (mBlock[i][j].get_value() == 0)
+            if (mBlock[i][j]->get_value() == 0)
             {
                 Position p = {i, j};
                 blanks.push_back(p);
@@ -94,12 +121,208 @@ void Game::addRandomBlock()
         int randomPosition = randomNumber % blanks.size();
         randomNumber = rand();
 
-        mBlock[blanks[randomPosition].row][blanks[randomPosition].col].set_value(randomNumber % 2 ? 2 : 4);
+        mBlock[blanks[randomPosition].row][blanks[randomPosition].col]->set_value(randomNumber % 2 ? 2 : 4);
     }
 }
 
+/** \brief left-shift all non zero blocks in one line.
+ *
+ * \param lineIndex int
+ * \return void
+ *
+ */
+void Game::leftShiftLine(int lineIndex)
+{
+    std::vector<Block *> temp(mSize, nullptr);
+    int tempIndex = 0;
+    for (int i = 0; i < mSize; i++)
+    {
+        if (mBlock[lineIndex][i]->get_value() != 0)
+        {
+            temp[tempIndex] = mBlock[lineIndex][i];
+            tempIndex++;
+        }
+        else
+        {
+            delete mBlock[lineIndex][i];
+            mBlock[lineIndex][i] = nullptr;
+        }
+    }
 
-/** @brief Render board game
+    for (int i = 0; i < mSize; i++)
+    {
+        if (temp[i] != nullptr) mBlock[lineIndex][i] = temp[i];
+        else mBlock[lineIndex][i] = new Block(lineIndex, i, 0);
+    }
+}
+
+/** \brief merge and calculate sum of blocks in one line.
+ *
+ * \param lineIndex int
+ * \return void
+ *
+ */
+void Game::mergeAndSum(int lineIndex)
+{
+    for (int i = 0; i < mSize - 1; i++)
+    {
+        if (mBlock[lineIndex][i]->get_value() == mBlock[lineIndex][i+1]->get_value())
+        {
+            mBlock[lineIndex][i]->set_value(2 * mBlock[lineIndex][i]->get_value());
+            mBlock[lineIndex][i+1]->set_value(0);
+        }
+    }
+}
+
+/** \brief left-shift all blocks in grid.
+ *
+ * \return void
+ *
+ */
+void Game::leftShiftGrid()
+{
+    for (int i = 0; i < mSize; i++)
+    {
+        leftShiftLine(i);
+        mergeAndSum(i);
+        leftShiftLine(i);
+    }
+}
+
+/** \brief rotate the board 90 degrees counter clockwise.
+ *
+ * \return void
+ *
+ */
+void Game::rotateLeft()
+{
+    std::vector< std::vector<Block*> > copyBoard(mSize, std::vector<Block*>(mSize, nullptr));
+    int row = 0;
+    int col = mSize - 1;
+
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            copyBoard[i][j] = mBlock[row++][col];
+        }
+        col--;
+        row = 0;
+    }
+    mBlock = copyBoard;
+}
+
+void Game::rotateRight()
+{
+    std::vector< std::vector<Block*> > copyBoard(mSize, std::vector<Block*>(mSize, nullptr));
+    int row = mSize - 1;
+    int col = 0;
+
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            copyBoard[i][j] = mBlock[row--][col];
+        }
+        row = mSize - 1;
+        col++;
+    }
+    mBlock = copyBoard;
+}
+
+//================= DEBUG =========================
+void Game::printBoard()
+{
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            std::cout << mBlock[i][j]->get_value() << " ";
+//                      << " (" << mBlock[i][j]->get_row()
+//                      << ", " << mBlock[i][j]->get_col()
+//                      << ") ";
+        }
+        std::cout << "\n";
+    }
+    std::cout << "\n";
+}
+
+//=================== GAME ===================
+
+/** \brief Execute movement commands from user input.
+ *   Including check grid's changes, adding random blocks.
+ *
+ * \param sdlKeyScancode SDL_Scancode
+ * \return void
+ *
+ */
+void Game::movementExecute(SDL_Scancode sdlKeyScancode)
+{
+    storeGrid();
+
+    switch (sdlKeyScancode)
+    {
+    case SDL_SCANCODE_UP:
+        up();
+        break;
+    case SDL_SCANCODE_DOWN:
+        down();
+        break;
+    case SDL_SCANCODE_LEFT:
+        left();
+        break;
+    case SDL_SCANCODE_RIGHT:
+        right();
+        break;
+    default:
+        printf("Unhandled movement key.\n");
+    }
+
+    if (gridChanged())
+    {
+        addRandomBlock();
+        for (int i = 0; i < mSize; i++)
+        {
+            for (int j = 0; j < mSize; j++)
+            {
+                mBlock[i][j]->set_row(i);
+                mBlock[i][j]->set_col(j);
+                mBlock[i][j]->updateMPosition();
+            }
+        }
+    }
+    printBoard();
+}
+
+void Game::up()
+{
+    rotateLeft();
+    leftShiftGrid();
+    rotateRight();
+}
+
+void Game::down()
+{
+    rotateRight();
+    leftShiftGrid();
+    rotateLeft();
+}
+
+void Game::left()
+{
+    leftShiftGrid();
+}
+
+void Game::right()
+{
+    rotateLeft();
+    rotateLeft();
+    leftShiftGrid();
+    rotateLeft();
+    rotateLeft();
+}
+
+/** @brief Render board game.
  *
  * @return void
  * Render block board by passing 2D blocks array.

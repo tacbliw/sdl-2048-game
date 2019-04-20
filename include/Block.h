@@ -21,6 +21,7 @@ class Block
 {
     public:
         Block(int row, int col, int value);
+        void updateMPosition();
 
         int get_row() { return row; }
         int get_col() { return col; }

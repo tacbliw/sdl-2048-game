@@ -16,18 +16,40 @@ class Game
         Game();
         virtual ~Game();
         void init(int size);
-        std::vector< std::vector<Block> > blankGrid();
+
+        std::vector< std::vector<Block*> > blankGrid();
+        void storeGrid();
+        bool gridChanged();
+
         void addRandomBlock();
-        void render();
+        void leftShiftLine(int lineIndex);
+        void mergeAndSum(int lineIndex);
+        void leftShiftGrid();
+        void rotateLeft();
+        void rotateRight();
+
+        //debug
+        void printBoard();
+
+        // Playing
+        void up();
+        void down();
+        void left();
+        void right();
+        void movementExecute(SDL_Scancode sdlKeyScancode);
+
         BlockBoard* getBlockBoard() { return mBlockBoard; }
+        void render();
 
     protected:
 
     private:
         int mSize;
-        std::vector< std::vector<Block> > mBlock;
+        std::vector< std::vector<Block*> > mBlock;
         friend class BlockBoard;
         BlockBoard *mBlockBoard;
+
+        std::vector< std::vector<int> > previousMBlock;
 
 };
 
