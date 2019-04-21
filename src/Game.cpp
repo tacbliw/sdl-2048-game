@@ -138,37 +138,6 @@ void Game::addRandomBlock()
     }
 }
 
-/** \brief left-shift all non zero blocks in one line.
- *
- * \param lineIndex int
- * \return void
- *
- */
-void Game::leftShiftLine(int lineIndex)
-{
-    std::vector<Block *> temp(mSize, nullptr);
-    int tempIndex = 0;
-    for (int i = 0; i < mSize; i++)
-    {
-        if (mBlock[lineIndex][i]->get_value() != 0)
-        {
-            temp[tempIndex] = mBlock[lineIndex][i];
-            tempIndex++;
-        }
-        else
-        {
-            delete mBlock[lineIndex][i];
-            mBlock[lineIndex][i] = nullptr;
-        }
-    }
-
-    for (int i = 0; i < mSize; i++)
-    {
-        if (temp[i] != nullptr) mBlock[lineIndex][i] = temp[i];
-        else mBlock[lineIndex][i] = new Block(lineIndex, i, 0);
-    }
-}
-
 /** \brief merge and calculate sum of blocks in one line.
  *
  * \param lineIndex int
@@ -177,15 +146,106 @@ void Game::leftShiftLine(int lineIndex)
  */
 void Game::mergeAndSum(int lineIndex)
 {
+    std::vector<Block*> newLine(mSize, nullptr);
+
     for (int i = 0; i < mSize - 1; i++)
     {
         if (mBlock[lineIndex][i]->get_value() == mBlock[lineIndex][i+1]->get_value())
         {
-            mBlock[lineIndex][i]->set_value(2 * mBlock[lineIndex][i]->get_value());
+            newLine[i] = new Block(lineIndex, i, 2 * mBlock[lineIndex][i]->get_value());
+            newLine[i]->mergeFrom1 = mBlock[lineIndex][i]->prevBlock;
+            newLine[i]->mergeFrom2 = mBlock[lineIndex][i+1]->prevBlock;
+
             mBlock[lineIndex][i+1]->set_value(0);
         }
+        else
+        {
+            newLine[i] = new Block(lineIndex, i, mBlock[lineIndex][i]->get_value());
+            newLine[i]->prevBlock = mBlock[lineIndex][i]->prevBlock;
+        }
     }
+
+    // take care of the last element cuz we loop to mSize - 1
+    newLine[mSize - 1] = new Block(lineIndex, mSize - 1, mBlock[lineIndex][mSize - 1]->get_value());
+
+    mBlock[lineIndex] = newLine;
 }
+
+/** \brief left-shift all non zero blocks in one line.
+ *
+ * \param lineIndex int
+ * \param secondTime bool
+ * \return void
+ *
+ * Animation: store the reference to the parent block.
+ * If this is the second time we call this function
+
+ * If the new block value is 0, reference to parent block is NULL.
+ */
+void Game::leftShiftLine(int lineIndex)
+{
+
+    std::vector<Block*> newLine(mSize, nullptr);
+    int index = 0;
+    for (int i = 0; i < mSize; i++)
+    {
+        if (mBlock[lineIndex][i]->get_value() != 0)
+        {
+            newLine[index] = new Block(lineIndex, index, mBlock[lineIndex][i]->get_value());
+            newLine[index]->prevBlock = mBlock[lineIndex][i];
+            index++;
+        }
+        else
+        {
+            delete mBlock[lineIndex][i];
+            mBlock[lineIndex][i] = nullptr;
+        }
+    }
+
+    while (index < mSize)
+    {
+        newLine[index] = new Block(lineIndex, index, 0); // prevBlock = nullptr
+        index++;
+    }
+    mBlock[lineIndex] = newLine;
+
+    mergeAndSum(lineIndex);
+
+    index = 0;
+    for (int i = 0; i < mSize; i++)
+    {
+        if (mBlock[lineIndex][i]->get_value() != 0)
+        {
+            newLine[index] = new Block(lineIndex, index, mBlock[lineIndex][i]->get_value());
+
+            if (mBlock[lineIndex][i]->prevBlock == nullptr) // this block is merged
+            {
+                newLine[index]->mergeFrom1 = mBlock[lineIndex][i]->mergeFrom1;
+                newLine[index]->mergeFrom2 = mBlock[lineIndex][i]->mergeFrom2;
+            }
+            else  // this block is shifted and not merged
+            {
+                newLine[index]->prevBlock = mBlock[lineIndex][i]->prevBlock;
+            }
+
+            index++;
+        }
+        else
+        {
+            delete mBlock[lineIndex][i];
+            mBlock[lineIndex][i] = nullptr;
+        }
+    }
+
+    while (index < mSize)
+    {
+        newLine[index] = new Block(lineIndex, index, 0); // prevBlock = nullptr
+        index++;
+    }
+    mBlock[lineIndex] = newLine;
+}
+
+
 
 /** \brief left-shift all blocks in grid.
  *
@@ -196,8 +256,6 @@ void Game::leftShiftGrid()
 {
     for (int i = 0; i < mSize; i++)
     {
-        leftShiftLine(i);
-        mergeAndSum(i);
         leftShiftLine(i);
     }
 }
@@ -250,10 +308,41 @@ void Game::printBoard()
     {
         for (int j = 0; j < mSize; j++)
         {
-            std::cout << mBlock[i][j]->get_value() << " ";
-//                      << " (" << mBlock[i][j]->get_row()
-//                      << ", " << mBlock[i][j]->get_col()
-//                      << ") ";
+            if (mBlock[i][j] != nullptr)
+            {
+                std::cout << mBlock[i][j]->get_value() << " [pre:";
+                if (mBlock[i][j]->prevBlock != nullptr)
+                {
+                    std::cout << "(" << mBlock[i][j]->prevBlock->get_row() << "," << mBlock[i][j]->prevBlock->get_col() << ")";
+                }
+                else
+                {
+                    std::cout << "0";
+                }
+
+                std::cout << ", mer 1:";
+                if (mBlock[i][j]->mergeFrom1 != nullptr)
+                {
+                    std::cout << "(" << mBlock[i][j]->mergeFrom1->get_row() << "," << mBlock[i][j]->mergeFrom1->get_col() << ")";
+                }
+                else
+                {
+                    std::cout << "0";
+                }
+                std::cout << ", mer 2:";
+                if (mBlock[i][j]->mergeFrom2 != nullptr)
+                {
+                    std::cout << "(" << mBlock[i][j]->mergeFrom2->get_row() << "," << mBlock[i][j]->mergeFrom2->get_col() << ")";
+                }
+                else
+                {
+                    std::cout << "0";
+                }
+                std::cout << "] ";
+
+
+            }
+            else std::cout << "nullptr ";
         }
         std::cout << "\n";
     }
@@ -294,14 +383,16 @@ void Game::movementExecute(SDL_Scancode sdlKeyScancode)
     if (gridChanged())
     {
         addRandomBlock();
-        for (int i = 0; i < mSize; i++)
+    }
+
+    // now update all the position to render
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
         {
-            for (int j = 0; j < mSize; j++)
-            {
-                mBlock[i][j]->set_row(i);
-                mBlock[i][j]->set_col(j);
-                mBlock[i][j]->updateMPosition();
-            }
+            mBlock[i][j]->set_row(i);
+            mBlock[i][j]->set_col(j);
+            mBlock[i][j]->updateMPosition();
         }
     }
     printBoard();
