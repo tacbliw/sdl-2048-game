@@ -221,6 +221,11 @@ Block::Block(int row, int col, int value)
     this->row = row;
     this->col = col;
     this->value = value;
+
+    prevBlock = nullptr;
+    mergeFrom1 = nullptr;
+    mergeFrom2 = nullptr;
+
     loadBlockMetadata();
     calPosFromXY(row, col, &mX, &mY);
     mTextInBlockTexture = new Texture();
