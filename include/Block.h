@@ -5,6 +5,7 @@
 
 #include "Texture.h"
 #include "Font.h"
+#include "Animation.h"
 
 extern void loadBlockMetadata();
 extern void unloadBlockMetadata();
@@ -16,7 +17,8 @@ extern void unloadBlockMetadata();
  * @param col Y coordinate of the Block.
  *
  */
-
+class AnimationExecutor;
+class Animation;
 class Block
 {
     public:
@@ -33,6 +35,15 @@ class Block
 
         void render(int x, int y);
 
+        void update(int delta_ms);
+
+        void setProperty(int ID, double value);
+        void attachAnimation(std::shared_ptr<Animation> animation);
+        std::shared_ptr<AnimationExecutor> mAnimationExecutor;
+        void planMove(int row, int col);
+
+        Block *mergeFrom, *mergeTo;
+
     private:
         SDL_Color blockTextColor;
         SDL_Color blockBgColor;
@@ -46,6 +57,9 @@ class Block
 
         Texture *mBlockTexture;
         Texture *mTextInBlockTexture;
+
+        friend void updateBlock(Block *block, int delta_ms);
+        //std::shared_ptr<AnimationExecutor> mAnimationExecutor;
 
 
 };

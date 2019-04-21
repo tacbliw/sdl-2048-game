@@ -37,6 +37,7 @@ int main( int argc, char * argv[] )
 
     bool quit = false;
     SDL_Event event;
+    Uint32 ticks = SDL_GetTicks();
     while (!quit && SDL_WaitEvent(&event))
     {
         switch (event.type)
@@ -67,9 +68,12 @@ int main( int argc, char * argv[] )
         }
         g->render();
         gRender.present();
+        Uint32 new_ticks = SDL_GetTicks();
+        int delta_ms = new_ticks - ticks;
+        ticks = new_ticks;
+        g->update(delta_ms);
     }
     CloseSDL();
-
 
     return 0;
 }

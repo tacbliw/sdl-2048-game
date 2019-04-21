@@ -40,6 +40,7 @@ class Game
 
         BlockBoard* getBlockBoard() { return mBlockBoard; }
         void render();
+        void update(int delta_ms);
 
     protected:
 

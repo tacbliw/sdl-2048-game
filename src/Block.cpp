@@ -52,7 +52,7 @@ SDL_Color backgroundColors[] = {
     {240, 225, 200}, // 4
     {240, 177, 120}, // 8
     {245, 150, 100}, // 16
-    {240, 203, 100}, // 32
+    {247, 123, 94}, // 32
     {250,  93,  60}, // 64
     {240, 205, 115}, // 128
     {240, 205,  97}, // 256
@@ -173,6 +173,21 @@ void Block::updateMPosition()
     mY = row * (blockSize + gridSpacing);
 }
 
+std::shared_ptr<Animation> makeMoveAnimation(int row1, int col1, int row2, int col2)
+{
+    int x1, y1, x2, y2;
+    calPosFromXY(row1, col1, &x1, &y1);
+    calPosFromXY(row2, col2, &x2, &y2);
+    printf("%d:%d to %d:%d \n", row1, col1, row2, col2);
+
+    auto animation = std::make_shared<Animation>(100, TMFUNC_EASE_IN_OUT);
+    auto t = animation->createTransition(1);
+    t->add(0, x1);
+    t->add(100, x2);
+    //printf("make move!!\n");
+    return animation;
+}
+
 //================ METADATA =================
 /** @brief Two function to help load and unload metadata.
  *
@@ -233,4 +248,43 @@ void Block::render(int x, int y)
     gRender.setRenderTarget(NULL);
     mBlockTexture->render(x + mX, y + mY, NULL);
     //gRender.present();
+}
+
+void updateBlock(Block *block, int delta_ms)
+{
+    if(block->mAnimationExecutor)
+    {
+        block->mAnimationExecutor->progress(delta_ms);
+    }
+}
+void Block::update(int delta_ms)
+{
+    updateBlock(this, delta_ms);
+}
+
+void Block::setProperty(int ID, double value)
+{
+    switch (ID)
+    {
+    case 1:
+        mX = static_cast<int>(value);
+        break;
+    case 2:
+        mY = static_cast<int>(value);
+        break;
+    }
+}
+
+void Block::attachAnimation(std::shared_ptr<Animation> animation)
+{
+    mAnimationExecutor = std::make_shared<AnimationExecutor>(animation, this);
+    mAnimationExecutor->init();
+}
+
+void Block::planMove(int toRow, int toCol)
+{
+    attachAnimation(makeMoveAnimation(row, col, toRow, toCol));
+    row = toRow;
+    col = toCol;
+    printf("row: %d, col: %d\n", row, col);
 }

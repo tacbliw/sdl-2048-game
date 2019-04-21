@@ -36,6 +36,19 @@ void Game::init(int size)
     previousMBlock = std::vector< std::vector<int> >(mSize, std::vector<int>(mSize, 0));
 
     addRandomBlock();
+
+    //mBlock[1][1]->set_value(2);
+    //addRandomBlock();
+    //addRandomBlock();
+
+
+
+    /*for (int i = 0; i < mSize * mSize; i++)
+    {
+        if (mBlock[i] != nullptr)
+            printf("%d ", mBlock[i]->get_value());
+    }*/
+
 }
 
 //=================== SUPPORT FUNCTIONS ================
@@ -330,4 +343,17 @@ void Game::right()
 void Game::render()
 {
     mBlockBoard->render(mBlock);
+}
+
+void Game::update(int delta_ms)
+{
+    //printf("update every time\n");
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            if (mBlock[i][j]->get_value() != 0)
+                mBlock[i][j]->update(delta_ms);
+        }
+    }
 }
