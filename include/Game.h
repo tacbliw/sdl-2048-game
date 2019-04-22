@@ -36,17 +36,19 @@ class Game
         void down();
         void left();
         void right();
-        void movementExecute(SDL_Scancode sdlKeyScancode);
+        void movementExecute(DIR dir);
 
         BlockBoard* getBlockBoard() { return mBlockBoard; }
         void render();
         void update(int delta_ms);
+        void test();
 
     protected:
 
     private:
         int mSize;
         std::vector< std::vector<Block*> > mBlock;
+        std::vector< std::vector<Block*> > pre_mBlock;
         friend class BlockBoard;
         BlockBoard *mBlockBoard;
 

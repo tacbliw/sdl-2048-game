@@ -33,10 +33,12 @@ void Game::init(int size)
     mBlockBoard = new BlockBoard(this);
 
     mBlock = blankGrid();
+    pre_mBlock = blankGrid();
     previousMBlock = std::vector< std::vector<int> >(mSize, std::vector<int>(mSize, 0));
 
     addRandomBlock();
 
+    test();
     //mBlock[1][1]->set_value(2);
     //addRandomBlock();
     //addRandomBlock();
@@ -83,6 +85,18 @@ void Game::storeGrid()
         for (int j = 0; j < mSize; j++)
         {
             previousMBlock[i][j] = mBlock[i][j]->get_value();
+        }
+    }
+}
+
+void Game::test()
+{
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            pre_mBlock[i][j] = new Block(i, j, mBlock[i][j]->get_value());
+            pre_mBlock[i][j]->prevBlock = mBlock[i][j]->prevBlock;
         }
     }
 }
@@ -136,6 +150,7 @@ void Game::addRandomBlock()
 
         mBlock[blanks[randomPosition].row][blanks[randomPosition].col]->set_value(randomNumber % 2 ? 2 : 4);
     }
+    test();
 }
 
 /** \brief merge and calculate sum of blocks in one line.
@@ -358,22 +373,22 @@ void Game::printBoard()
  * \return void
  *
  */
-void Game::movementExecute(SDL_Scancode sdlKeyScancode)
+void Game::movementExecute(DIR dir)
 {
     storeGrid();
-
-    switch (sdlKeyScancode)
+    test();
+    switch (dir)
     {
-    case SDL_SCANCODE_UP:
+    case UP:
         up();
         break;
-    case SDL_SCANCODE_DOWN:
+    case DOWN:
         down();
         break;
-    case SDL_SCANCODE_LEFT:
+    case LEFT:
         left();
         break;
-    case SDL_SCANCODE_RIGHT:
+    case RIGHT:
         right();
         break;
     default:
@@ -393,6 +408,22 @@ void Game::movementExecute(SDL_Scancode sdlKeyScancode)
             mBlock[i][j]->set_row(i);
             mBlock[i][j]->set_col(j);
             mBlock[i][j]->updateMPosition();
+        }
+    }
+        for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            if (mBlock[i][j]->get_value() != 0)
+            {
+                if (mBlock[i][j]->prevBlock != nullptr)
+                {
+                    printf("In transition handle: %d:%d to %d:%d\n", mBlock[i][j]->prevBlock->get_row(), mBlock[i][j]->prevBlock->get_col(), i, j);
+                    pre_mBlock[mBlock[i][j]->prevBlock->get_row()][mBlock[i][j]->prevBlock->get_col()]->planMove(i, j);
+                }
+                    //printf("In transition handle: %d:%d to %d:%d\n", mBlock[i][j]->prevBlock->get_row(), mBlock[i][j]->prevBlock->get_col(), i, j);
+                    //mBlock[i][j]->update(delta_ms);
+            }
         }
     }
     printBoard();
@@ -433,18 +464,28 @@ void Game::right()
  */
 void Game::render()
 {
-    mBlockBoard->render(mBlock);
+    //printf("update every time\n");
+    /*for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            if (mBlock[i][j]->prevBlock != nullptr)
+                pre_mBlock[mBlock[i][j]->prevBlock->get_row()][mBlock[i][j]->prevBlock->get_col()]->planMove(i, j);
+                //mBlock[i][j]->update(delta_ms);
+        }
+    }*/
+    mBlockBoard->render(pre_mBlock);
 }
 
 void Game::update(int delta_ms)
 {
-    //printf("update every time\n");
     for (int i = 0; i < mSize; i++)
     {
         for (int j = 0; j < mSize; j++)
         {
-            if (mBlock[i][j]->get_value() != 0)
-                mBlock[i][j]->update(delta_ms);
+            if (mBlock[i][j]->prevBlock != nullptr)
+                pre_mBlock[mBlock[i][j]->prevBlock->get_row()][mBlock[i][j]->prevBlock->get_col()]->update(delta_ms);
+                //mBlock[i][j]->update(delta_ms);
         }
     }
 }

@@ -36,42 +36,39 @@ int main( int argc, char * argv[] )
 
 
     bool quit = false;
-    SDL_Event event;
+    SDL_Event e;
     Uint32 ticks = SDL_GetTicks();
-    while (!quit && SDL_WaitEvent(&event))
+    while (!quit)
     {
-        switch (event.type)
-        {
-        case SDL_KEYDOWN:
-            switch (event.key.keysym.scancode)
-            {
-            case SDL_SCANCODE_UP:
-                g->movementExecute(SDL_SCANCODE_UP);
+        while(SDL_PollEvent(&e)) {
+        if(e.type == SDL_QUIT)
+            quit = true;
+        else if(e.type == SDL_KEYDOWN) {
+            switch(e.key.keysym.sym) {
+            case SDLK_UP:
+                g->movementExecute(UP);
                 break;
-            case SDL_SCANCODE_DOWN:
-                g->movementExecute(SDL_SCANCODE_DOWN);
+            case SDLK_RIGHT:
+                g->movementExecute(RIGHT);
                 break;
-            case SDL_SCANCODE_LEFT:
-                g->movementExecute(SDL_SCANCODE_LEFT);
+            case SDLK_DOWN:
+                g->movementExecute(DOWN);
                 break;
-            case SDL_SCANCODE_RIGHT:
-                g->movementExecute(SDL_SCANCODE_RIGHT);
-                break;
-            default:
-                printf("Unhandled key\n");
+            case SDLK_LEFT:
+                g->movementExecute(LEFT);
                 break;
             }
-            break;
-        case SDL_QUIT:
-            quit = true;
-            break;
         }
-        g->render();
+                g->render();
         gRender.present();
         Uint32 new_ticks = SDL_GetTicks();
         int delta_ms = new_ticks - ticks;
         ticks = new_ticks;
         g->update(delta_ms);
+    }
+
+
+
     }
     CloseSDL();
 

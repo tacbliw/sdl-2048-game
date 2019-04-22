@@ -78,14 +78,16 @@ void AnimationExecutor::progress(int delta_ms)
         printf("set ID = %d, value = %f\n", (*iter)->propertyID(), (*iter)->calculate(mElapsed, mDuration, mTimingFunction));
         mBlockTarget->setProperty((*iter)->propertyID(), (*iter)->calculate(mElapsed, mDuration, mTimingFunction));
     }
+    printf("End rui`\n");
 }
 
 void AnimationExecutor::init()
 {
     for (auto iter = mTransitions.cbegin(); iter != mTransitions.cend(); iter++)
     {
-        printf("set property: ID = %d, value = %d\n", (*iter)->propertyID(), (*iter)->initialValue());
+        //printf("set property: ID = %d, value = %d\n", (*iter)->propertyID(), (*iter)->initialValue());
         mBlockTarget->setProperty((*iter)->propertyID(), (*iter)->initialValue());
+
     }
 }
 
