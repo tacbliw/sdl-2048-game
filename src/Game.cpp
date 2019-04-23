@@ -60,14 +60,6 @@ void Game::init(int size)
 std::vector< std::vector<Block*> > Game::blankGrid()
 {
     std::vector< std::vector<Block*> > grid(mSize, std::vector<Block*>(mSize, nullptr));
-    for (int i = 0; i < mSize; i++)
-    {
-        for (int j = 0; j < mSize; j++)
-        {
-            grid[i][j] = new Block(i, j, 0);
-        }
-    }
-
     return grid;
 }
 
@@ -82,7 +74,14 @@ void Game::storeGrid()
     {
         for (int j = 0; j < mSize; j++)
         {
-            previousMBlock[i][j] = mBlock[i][j]->get_value();
+            if (mBlock[i][j] != nullptr)
+            {
+                previousMBlock[i][j] = mBlock[i][j]->get_value();
+            }
+            else
+            {
+                previousMBlock[i][j] = 0;
+            }
         }
     }
 }
@@ -98,10 +97,9 @@ bool Game::gridChanged()
     {
         for (int j = 0; j < mSize; j++)
         {
-            if (mBlock[i][j]->get_value() != previousMBlock[i][j])
-            {
-                return true;
-            }
+            if (mBlock[i][j] != nullptr &&
+                mBlock[i][j]->get_value() != previousMBlock[i][j])
+                    return true;
         }
     }
     return false;
@@ -120,7 +118,7 @@ void Game::addRandomBlock()
     {
         for (int j = 0; j < mSize; j++)
         {
-            if (mBlock[i][j]->get_value() == 0)
+            if (mBlock[i][j] == nullptr)
             {
                 Position p = {i, j};
                 blanks.push_back(p);
@@ -134,7 +132,11 @@ void Game::addRandomBlock()
         int randomPosition = randomNumber % blanks.size();
         randomNumber = rand();
 
-        mBlock[blanks[randomPosition].row][blanks[randomPosition].col]->set_value(randomNumber % 2 ? 2 : 4);
+        mBlock[blanks[randomPosition].row][blanks[randomPosition].col]
+                = new Block(blanks[randomPosition].row,
+                            blanks[randomPosition].col,
+                            randomNumber % 10 < 9 ? 2 : 4
+                            );
     }
 }
 
@@ -150,23 +152,43 @@ void Game::mergeAndSum(int lineIndex)
 
     for (int i = 0; i < mSize - 1; i++)
     {
-        if (mBlock[lineIndex][i]->get_value() == mBlock[lineIndex][i+1]->get_value())
+        if (mBlock[lineIndex][i] != nullptr &&
+            mBlock[lineIndex][i+1] != nullptr)
         {
-            newLine[i] = new Block(lineIndex, i, 2 * mBlock[lineIndex][i]->get_value());
-            newLine[i]->mergeFrom1 = mBlock[lineIndex][i]->prevBlock;
-            newLine[i]->mergeFrom2 = mBlock[lineIndex][i+1]->prevBlock;
+            if (mBlock[lineIndex][i]->get_value() == mBlock[lineIndex][i+1]->get_value())
+            {
+                newLine[i] = new Block(lineIndex, i, 2 * mBlock[lineIndex][i]->get_value());
+                newLine[i]->mergeFrom1 = mBlock[lineIndex][i]->prevBlock;
+                newLine[i]->mergeFrom2 = mBlock[lineIndex][i+1]->prevBlock;
 
-            mBlock[lineIndex][i+1]->set_value(0);
+                delete mBlock[lineIndex][i];
+                mBlock[lineIndex][i] = nullptr;
+                delete mBlock[lineIndex][i+1];
+                mBlock[lineIndex][i+1] = nullptr;
+            }
+            else
+            {
+                newLine[i] = new Block(lineIndex, i, mBlock[lineIndex][i]->get_value());
+                newLine[i]->prevBlock = mBlock[lineIndex][i]->prevBlock;
+                delete mBlock[lineIndex][i];
+                mBlock[lineIndex][i] = nullptr;
+            }
         }
-        else
+        else // [null, block], [block, null], [null, null]
         {
-            newLine[i] = new Block(lineIndex, i, mBlock[lineIndex][i]->get_value());
-            newLine[i]->prevBlock = mBlock[lineIndex][i]->prevBlock;
+            if (mBlock[lineIndex][i] != nullptr)
+            {
+                newLine[i] = new Block(lineIndex, i, mBlock[lineIndex][i]->get_value());
+                newLine[i]->prevBlock = mBlock[lineIndex][i]->prevBlock;
+            }
         }
     }
 
-    // take care of the last element cuz we loop to mSize - 1
-    newLine[mSize - 1] = new Block(lineIndex, mSize - 1, mBlock[lineIndex][mSize - 1]->get_value());
+    if (mBlock[lineIndex][mSize-1] != nullptr)
+    {
+        newLine[mSize-1] = new Block(lineIndex, mSize-1, mBlock[lineIndex][mSize-1]->get_value());
+        newLine[mSize-1]->prevBlock = mBlock[lineIndex][mSize-1]->prevBlock;
+    }
 
     mBlock[lineIndex] = newLine;
 }
@@ -174,7 +196,6 @@ void Game::mergeAndSum(int lineIndex)
 /** \brief left-shift all non zero blocks in one line.
  *
  * \param lineIndex int
- * \param secondTime bool
  * \return void
  *
  * Animation: store the reference to the parent block.
@@ -189,23 +210,12 @@ void Game::leftShiftLine(int lineIndex)
     int index = 0;
     for (int i = 0; i < mSize; i++)
     {
-        if (mBlock[lineIndex][i]->get_value() != 0)
+        if (mBlock[lineIndex][i] != nullptr)
         {
             newLine[index] = new Block(lineIndex, index, mBlock[lineIndex][i]->get_value());
             newLine[index]->prevBlock = mBlock[lineIndex][i];
             index++;
         }
-        else
-        {
-            delete mBlock[lineIndex][i];
-            mBlock[lineIndex][i] = nullptr;
-        }
-    }
-
-    while (index < mSize)
-    {
-        newLine[index] = new Block(lineIndex, index, 0); // prevBlock = nullptr
-        index++;
     }
     mBlock[lineIndex] = newLine;
 
@@ -214,7 +224,7 @@ void Game::leftShiftLine(int lineIndex)
     index = 0;
     for (int i = 0; i < mSize; i++)
     {
-        if (mBlock[lineIndex][i]->get_value() != 0)
+        if (mBlock[lineIndex][i] != nullptr)
         {
             newLine[index] = new Block(lineIndex, index, mBlock[lineIndex][i]->get_value());
 
@@ -228,20 +238,13 @@ void Game::leftShiftLine(int lineIndex)
                 newLine[index]->prevBlock = mBlock[lineIndex][i]->prevBlock;
             }
 
+            delete mBlock[lineIndex][i];
+
             index++;
         }
-        else
-        {
-            delete mBlock[lineIndex][i];
-            mBlock[lineIndex][i] = nullptr;
-        }
     }
+    while (index < mSize) newLine[index++] = nullptr;
 
-    while (index < mSize)
-    {
-        newLine[index] = new Block(lineIndex, index, 0); // prevBlock = nullptr
-        index++;
-    }
     mBlock[lineIndex] = newLine;
 }
 
@@ -283,6 +286,11 @@ void Game::rotateLeft()
     mBlock = copyBoard;
 }
 
+/** \brief rotate the board 90 degrees clockwise.
+ *
+ * \return void
+ *
+ */
 void Game::rotateRight()
 {
     std::vector< std::vector<Block*> > copyBoard(mSize, std::vector<Block*>(mSize, nullptr));
@@ -301,6 +309,37 @@ void Game::rotateRight()
     mBlock = copyBoard;
 }
 
+/** \brief Check if no move left
+ *
+ * \return bool
+ *
+ *  No move means no ZERO in the board and no SAME BLOCK next to each other.
+ */
+bool Game::noMove()
+{
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            if (mBlock[i][j] == nullptr || mBlock[i+1][j] == nullptr || mBlock[i][j+1] == nullptr)
+            {
+                return false;
+            }
+
+            if (i < mSize - 1 && mBlock[i][j]->get_value() == mBlock[i+1][j]->get_value())
+            {
+                return false;
+            }
+
+            if (j < mSize - 1 && mBlock[i][j]->get_value() == mBlock[i][j+1]->get_value())
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 //================= DEBUG =========================
 void Game::printBoard()
 {
@@ -310,7 +349,7 @@ void Game::printBoard()
         {
             if (mBlock[i][j] != nullptr)
             {
-                std::cout << mBlock[i][j]->get_value() << " [pre:";
+                std::cout << mBlock[i][j]->get_value() << "[pre:";
                 if (mBlock[i][j]->prevBlock != nullptr)
                 {
                     std::cout << "(" << mBlock[i][j]->prevBlock->get_row() << "," << mBlock[i][j]->prevBlock->get_col() << ")";
@@ -352,7 +391,7 @@ void Game::printBoard()
 //=================== GAME ===================
 
 /** \brief Execute movement commands from user input.
- *   Including check grid's changes, adding random blocks.
+ *   Including check grid's changes, adding random blocks and check game over.
  *
  * \param sdlKeyScancode SDL_Scancode
  * \return void
@@ -380,22 +419,32 @@ void Game::movementExecute(SDL_Scancode sdlKeyScancode)
         printf("Unhandled movement key.\n");
     }
 
+    printf("Adding random block.....\n");
     if (gridChanged())
     {
         addRandomBlock();
     }
+    printf("Done adding random block\n");
 
     // now update all the position to render
     for (int i = 0; i < mSize; i++)
     {
         for (int j = 0; j < mSize; j++)
         {
-            mBlock[i][j]->set_row(i);
-            mBlock[i][j]->set_col(j);
-            mBlock[i][j]->updateMPosition();
+            if (mBlock[i][j] != nullptr)
+            {
+                mBlock[i][j]->set_row(i);
+                mBlock[i][j]->set_col(j);
+                mBlock[i][j]->updateMPosition();
+            }
         }
     }
     printBoard();
+
+//    if (noMove())
+//    {
+//        gameOver();
+//    }
 }
 
 void Game::up()
@@ -426,6 +475,12 @@ void Game::right()
     rotateLeft();
 }
 
+void Game::gameOver()
+{
+    printf("Game Over!\n");
+
+    /**< Add game over code here */
+}
 /** @brief Render board game.
  *
  * @return void
@@ -443,7 +498,7 @@ void Game::update(int delta_ms)
     {
         for (int j = 0; j < mSize; j++)
         {
-            if (mBlock[i][j]->get_value() != 0)
+            if (mBlock[i][j] != nullptr)
                 mBlock[i][j]->update(delta_ms);
         }
     }

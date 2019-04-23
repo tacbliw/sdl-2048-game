@@ -50,7 +50,7 @@ void BlockBoard::render(std::vector< std::vector<Block*> > block)
     {
         for (int j = 0; j < m_pGame->mSize; j++)
         {
-            if (block[i][j]->get_value() != 0)
+            if (block[i][j] != nullptr)
             {
                 block[i][j]->render(mX + gridSpacing, mY + gridSpacing);
             }

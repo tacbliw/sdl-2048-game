@@ -27,6 +27,7 @@ class Game
         void leftShiftGrid();
         void rotateLeft();
         void rotateRight();
+        bool noMove();
 
         //debug
         void printBoard();
@@ -37,6 +38,7 @@ class Game
         void left();
         void right();
         void movementExecute(SDL_Scancode sdlKeyScancode);
+        void gameOver();
 
         BlockBoard* getBlockBoard() { return mBlockBoard; }
         void render();
