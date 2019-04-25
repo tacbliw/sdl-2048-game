@@ -126,7 +126,7 @@ void Game::addRandomBlock()
         }
     }
 
-    if (!blanks.empty())
+    if (blanks.size() > 0)
     {
         int randomNumber = rand();
         int randomPosition = randomNumber % blanks.size();
@@ -321,7 +321,9 @@ bool Game::noMove()
     {
         for (int j = 0; j < mSize; j++)
         {
-            if (mBlock[i][j] == nullptr || mBlock[i+1][j] == nullptr || mBlock[i][j+1] == nullptr)
+            if (mBlock[i][j] == nullptr ||
+                (i < mSize - 1 && mBlock[i+1][j] == nullptr) ||
+                (j < mSize - 1 && mBlock[i][j+1] == nullptr))
             {
                 return false;
             }
@@ -441,10 +443,10 @@ void Game::movementExecute(SDL_Scancode sdlKeyScancode)
     }
     printBoard();
 
-//    if (noMove())
-//    {
-//        gameOver();
-//    }
+    if (noMove())
+    {
+        gameOver();
+    }
 }
 
 void Game::up()
