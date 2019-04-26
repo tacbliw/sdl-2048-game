@@ -24,10 +24,6 @@ void Font::init(const char* path_to_ttf, int size)
         std::cout << "Failed loading font: " << path_to_ttf << std::endl;
         std::cout << "Error: " << TTF_GetError() << std::endl;
     }
-    else
-    {
-        std::cout << "Font loaded: " << path_to_ttf << std::endl;
-    }
 }
 
 void Font::free()

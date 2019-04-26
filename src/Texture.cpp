@@ -3,36 +3,6 @@
 #include "Font.h"
 #include <stdio.h>
 #include "SDLUtils.h"
-/** @brief Load texture from file
-  *
-  *
-  */
-bool Texture::loadTexture(std::string path)
-{
-    SDL_Texture *newTexture = NULL;
-    SDL_Surface *loadSurface = IMG_Load(path.c_str());
-    if (loadSurface == NULL)
-    {
-        printf("cant load image....\n SDL_image error: %s\n", IMG_GetError());
-    }
-    else
-    {
-        newTexture = SDL_CreateTextureFromSurface(gRender.getRenderer(), loadSurface);
-        if (newTexture == NULL)
-        {
-            printf("gimme some paper to draw, i dont have texture. SDL_Error: %s\n", SDL_GetError());
-        }
-        else
-        {
-            mWidth = loadSurface->w;
-            mHeight = loadSurface->h;
-        }
-        SDL_FreeSurface(loadSurface);
-    }
-
-    mTexture = newTexture;
-    return mTexture == NULL;
-}
 
 /** @brief Load texture from text
   *

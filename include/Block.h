@@ -41,6 +41,8 @@ class Block
         std::shared_ptr<AnimationExecutor> mAnimationExecutor;
         void planMove(int row, int col);
 
+        Block *mergeFrom1, *mergeFrom2;
+
     private:
         SDL_Color blockTextColor;
         SDL_Color blockBgColor;

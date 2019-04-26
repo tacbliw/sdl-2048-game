@@ -27,8 +27,6 @@ int main( int argc, char * argv[] )
         gRender.clear();
         Game *g = new Game;
         g->init(4);
-        g->getBlockBoard()->setPosition((SCREEN_WIDTH - g->getBlockBoard()->getWidth())/2,
-                                        (SCREEN_HEIGHT - g->getBlockBoard()->getWidth())/2);
         g->render();
         gRender.present();
 
@@ -63,15 +61,13 @@ int main( int argc, char * argv[] )
             Uint32 new_ticks = SDL_GetTicks();
             int delta_ms = new_ticks - ticks;
             ticks = new_ticks;
+            gRender.setDrawColor({255, 255, 255});
+            gRender.clear();
             g->render();
             gRender.present();
             g->update(delta_ms);
         }
         CloseSDL();
     }
-
-
-
-
     return 0;
 }

@@ -30,7 +30,12 @@ class Game
         std::vector< std::vector<Block *> > mBlock;
         friend class BlockBoard;
         BlockBoard *mBlockBoard;
-
+        void up();
+        void down();
+        void left();
+        void right();
+        void moveVer(int x, int y, int d);
+        void moveHor(int x, int y, int d);
 };
 
 #endif // GAME_H

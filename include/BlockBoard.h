@@ -7,7 +7,7 @@ class Game;
 class BlockBoard
 {
     public:
-        BlockBoard(Game* pGame);
+        BlockBoard(Game* pGame, int _mX, int _mY);
         void render(std::vector< std::vector<Block *> > block);
         void setPosition(int x, int y) {mX = x; mY = y;}
         int getWidth();

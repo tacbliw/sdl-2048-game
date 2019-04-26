@@ -172,12 +172,22 @@ std::shared_ptr<Animation> makeMoveAnimation(int row1, int col1, int row2, int c
     int x1, y1, x2, y2;
     calPosFromXY(row1, col1, &x1, &y1);
     calPosFromXY(row2, col2, &x2, &y2);
-    printf("%d:%d to %d:%d \n", row1, col1, row2, col2);
+    //printf("%d:%d to %d:%d \n", row1, col1, row2, col2);
 
     auto animation = std::make_shared<Animation>(100, TMFUNC_EASE_IN_OUT);
-    auto t = animation->createTransition(1);
-    t->add(0, x1);
-    t->add(100, x2);
+    if (row1 == row2)
+    {
+        auto t = animation->createTransition(1);
+        t->add(0, x1);
+        t->add(100, x2);
+    }
+    else
+    {
+        auto t = animation->createTransition(2);
+        t->add(0, y1);
+        t->add(100, y2);
+    }
+
     //printf("make move!!\n");
     return animation;
 }
@@ -219,16 +229,7 @@ Block::Block(int row, int col, int value)
     calPosFromXY(row, col, &mX, &mY);
     mTextInBlockTexture = new Texture();
     mBlockTexture = new Texture();
-}
 
-/** @brief Render block
- *
- * @param x: x position
- * @param y: y position
- *
- */
-void Block::render(int x, int y)
-{
     std::stringstream ss;
     ss << get_value();
     mTextInBlockTexture->loadTextureFromText(&numberLarge, ss.str().c_str(), getBlockTextColor(get_value()));
@@ -240,6 +241,19 @@ void Block::render(int x, int y)
     mTextInBlockTexture->render((blockSize - mTextInBlockTexture->getWidth())/2, (blockSize - mTextInBlockTexture->getHeight())/2, NULL);
 
     gRender.setRenderTarget(NULL);
+    mergeFrom1 = nullptr;
+    mergeFrom2 = nullptr;
+}
+
+/** @brief Render block
+ *
+ * @param x: x position
+ * @param y: y position
+ *
+ */
+void Block::render(int x, int y)
+{
+
     mBlockTexture->render(x + mX, y + mY, NULL);
     //gRender.present();
 }
@@ -254,6 +268,11 @@ void updateBlock(Block *block, int delta_ms)
 void Block::update(int delta_ms)
 {
     updateBlock(this, delta_ms);
+//    if (mergeFrom1 != nullptr)
+//    {
+//        updateBlock(mergeFrom1, delta_ms);
+//        updateBlock(mergeFrom2, delta_ms);
+//    }
 }
 
 void Block::setProperty(int ID, double value)
@@ -280,5 +299,5 @@ void Block::planMove(int toRow, int toCol)
     attachAnimation(makeMoveAnimation(row, col, toRow, toCol));
     row = toRow;
     col = toCol;
-    printf("row: %d, col: %d\n", row, col);
+    //printf("row: %d, col: %d\n", row, col);
 }
