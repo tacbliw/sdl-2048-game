@@ -18,7 +18,7 @@ void Render::present()
  * @param height int
  * @return void
  *
- * Draw a rect with position and width, height given
+ * Draw a rectangle with position and width, height given
  */
 void Render::fillRect(int x, int y, int width, int height)
 {

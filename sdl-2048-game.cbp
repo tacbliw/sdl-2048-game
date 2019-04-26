@@ -49,6 +49,7 @@
 		<Unit filename="include/Game.h" />
 		<Unit filename="include/Render.h" />
 		<Unit filename="include/SDLUtils.h" />
+		<Unit filename="include/ScoreBoard.h" />
 		<Unit filename="include/Texture.h" />
 		<Unit filename="include/UnitBezier.h" />
 		<Unit filename="main.cpp" />
@@ -59,6 +60,7 @@
 		<Unit filename="src/Game.cpp" />
 		<Unit filename="src/Render.cpp" />
 		<Unit filename="src/SDLUtils.cpp" />
+		<Unit filename="src/ScoreBoard.cpp" />
 		<Unit filename="src/Texture.cpp" />
 		<Extensions>
 			<code_completion />

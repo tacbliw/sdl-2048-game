@@ -32,9 +32,14 @@ void Game::init(int size)
     int len = size * size;
     mBlockBoard = new BlockBoard(this);
 
+    // mBlock
     mBlock = blankGrid();
     previousMBlock = std::vector< std::vector<int> >(mSize, std::vector<int>(mSize, 0));
 
+    // mScoreBoard
+    mScoreBoard = new ScoreBoard();
+
+    addRandomBlock();
     addRandomBlock();
 
     //mBlock[1][1]->set_value(2);
@@ -140,7 +145,8 @@ void Game::addRandomBlock()
     }
 }
 
-/** \brief merge and calculate sum of blocks in one line.
+/** \brief merge and calculate sum of blocks in one line,
+ *  update player's score.
  *
  * \param lineIndex int
  * \return void
@@ -149,6 +155,7 @@ void Game::addRandomBlock()
 void Game::mergeAndSum(int lineIndex)
 {
     std::vector<Block*> newLine(mSize, nullptr);
+    int pointEarned = 0;
 
     for (int i = 0; i < mSize - 1; i++)
     {
@@ -160,6 +167,7 @@ void Game::mergeAndSum(int lineIndex)
                 newLine[i] = new Block(lineIndex, i, 2 * mBlock[lineIndex][i]->get_value());
                 newLine[i]->mergeFrom1 = mBlock[lineIndex][i]->prevBlock;
                 newLine[i]->mergeFrom2 = mBlock[lineIndex][i+1]->prevBlock;
+                pointEarned += newLine[i]->get_value();
 
                 delete mBlock[lineIndex][i];
                 mBlock[lineIndex][i] = nullptr;
@@ -190,6 +198,7 @@ void Game::mergeAndSum(int lineIndex)
         newLine[mSize-1]->prevBlock = mBlock[lineIndex][mSize-1]->prevBlock;
     }
 
+    mScoreBoard->addPoint(pointEarned);
     mBlock[lineIndex] = newLine;
 }
 
@@ -354,7 +363,9 @@ void Game::printBoard()
                 std::cout << mBlock[i][j]->get_value() << "[pre:";
                 if (mBlock[i][j]->prevBlock != nullptr)
                 {
-                    std::cout << "(" << mBlock[i][j]->prevBlock->get_row() << "," << mBlock[i][j]->prevBlock->get_col() << ")";
+                    std::cout << "(" << mBlock[i][j]->prevBlock->get_row()
+                              << "," << mBlock[i][j]->prevBlock->get_col()
+                              << ")";
                 }
                 else
                 {
@@ -364,7 +375,9 @@ void Game::printBoard()
                 std::cout << ", mer 1:";
                 if (mBlock[i][j]->mergeFrom1 != nullptr)
                 {
-                    std::cout << "(" << mBlock[i][j]->mergeFrom1->get_row() << "," << mBlock[i][j]->mergeFrom1->get_col() << ")";
+                    std::cout << "(" << mBlock[i][j]->mergeFrom1->get_row()
+                              << "," << mBlock[i][j]->mergeFrom1->get_col()
+                              << ")";
                 }
                 else
                 {
@@ -373,7 +386,9 @@ void Game::printBoard()
                 std::cout << ", mer 2:";
                 if (mBlock[i][j]->mergeFrom2 != nullptr)
                 {
-                    std::cout << "(" << mBlock[i][j]->mergeFrom2->get_row() << "," << mBlock[i][j]->mergeFrom2->get_col() << ")";
+                    std::cout << "(" << mBlock[i][j]->mergeFrom2->get_row()
+                              << "," << mBlock[i][j]->mergeFrom2->get_col()
+                              << ")";
                 }
                 else
                 {
@@ -421,12 +436,10 @@ void Game::movementExecute(SDL_Scancode sdlKeyScancode)
         printf("Unhandled movement key.\n");
     }
 
-    printf("Adding random block.....\n");
     if (gridChanged())
     {
         addRandomBlock();
     }
-    printf("Done adding random block\n");
 
     // now update all the position to render
     for (int i = 0; i < mSize; i++)
@@ -441,6 +454,7 @@ void Game::movementExecute(SDL_Scancode sdlKeyScancode)
             }
         }
     }
+    printf("Current player's score: %d\n", mScoreBoard->getPoint());
     printBoard();
 
     if (noMove())

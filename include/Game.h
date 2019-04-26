@@ -2,6 +2,8 @@
 #define GAME_H
 #include <Block.h>
 #include <BlockBoard.h>
+#include <ScoreBoard.h>
+
 #include <vector>
 
 /** @brief Direction
@@ -51,6 +53,7 @@ class Game
         std::vector< std::vector<Block*> > mBlock;
         friend class BlockBoard;
         BlockBoard *mBlockBoard;
+        ScoreBoard *mScoreBoard;
 
         std::vector< std::vector<int> > previousMBlock;
 
