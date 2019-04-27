@@ -33,6 +33,7 @@ class Game
 
         //debug
         void printBoard();
+        void addIntendedBlock(int row, int col, int value);
 
         // Playing
         void up();
@@ -41,12 +42,12 @@ class Game
         void right();
         void movementExecute(SDL_Scancode sdlKeyScancode);
         void gameOver();
+        void newGame();
 
+        // render
         BlockBoard* getBlockBoard() { return mBlockBoard; }
         void render();
         void update(int delta_ms);
-
-    protected:
 
     private:
         int mSize;

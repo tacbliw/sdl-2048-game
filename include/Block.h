@@ -23,6 +23,8 @@ class Block
 {
     public:
         Block(int row, int col, int value);
+        ~Block();
+
         void updateMPosition();
 
         int get_row() { return row; }
@@ -31,7 +33,7 @@ class Block
 
         void set_row(int row) { this->row = row; }
         void set_col(int col) { this->col = col; }
-        void set_value(int value) { this->value = value; }
+        void set_value(int value);
 
         void render(int x, int y);
 
@@ -50,9 +52,9 @@ class Block
         SDL_Color blockBgColor;
         Font font;
 
+        int value;
         int mX;
         int mY;
-        int value;
         int row;
         int col;
 

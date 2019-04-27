@@ -42,6 +42,12 @@ void Game::init(int size)
     addRandomBlock();
     addRandomBlock();
 
+//    addIntendedBlock(0, 0, 1024);
+//    addIntendedBlock(0, 1, 2048);
+//    addIntendedBlock(0, 2, 4096);
+//    addIntendedBlock(0, 3, 8192);
+//    addIntendedBlock(1, 0, 65536);
+
     //mBlock[1][1]->set_value(2);
     //addRandomBlock();
     //addRandomBlock();
@@ -405,7 +411,11 @@ void Game::printBoard()
     std::cout << "\n";
 }
 
-//=================== GAME ===================
+void Game::addIntendedBlock(int row, int col, int value)
+{
+    mBlock[row][col] = new Block(row, col, value);
+}
+//=================== GAME FUNCTIONS ===================
 
 /** \brief Execute movement commands from user input.
  *   Including check grid's changes, adding random blocks and check game over.
@@ -463,6 +473,29 @@ void Game::movementExecute(SDL_Scancode sdlKeyScancode)
     }
 }
 
+void Game::gameOver()
+{
+    printf("Game Over!\n");
+
+    /**< Add game over code here */
+}
+
+void Game::newGame()
+{
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            delete mBlock[i][j];
+        }
+    }
+
+    mBlock = blankGrid();
+    mScoreBoard->resetPoint();
+    addRandomBlock();
+    addRandomBlock();
+}
+
 void Game::up()
 {
     rotateLeft();
@@ -491,12 +524,6 @@ void Game::right()
     rotateLeft();
 }
 
-void Game::gameOver()
-{
-    printf("Game Over!\n");
-
-    /**< Add game over code here */
-}
 /** @brief Render board game.
  *
  * @return void

@@ -47,6 +47,7 @@
 		<Unit filename="include/BlockBoard.h" />
 		<Unit filename="include/Font.h" />
 		<Unit filename="include/Game.h" />
+		<Unit filename="include/NewGameButton.h" />
 		<Unit filename="include/Render.h" />
 		<Unit filename="include/SDLUtils.h" />
 		<Unit filename="include/ScoreBoard.h" />
@@ -58,6 +59,7 @@
 		<Unit filename="src/BlockBoard.cpp" />
 		<Unit filename="src/Font.cpp" />
 		<Unit filename="src/Game.cpp" />
+		<Unit filename="src/NewGameButton.cpp" />
 		<Unit filename="src/Render.cpp" />
 		<Unit filename="src/SDLUtils.cpp" />
 		<Unit filename="src/ScoreBoard.cpp" />

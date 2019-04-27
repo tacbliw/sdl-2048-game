@@ -34,8 +34,8 @@ static Font numberLarge;
 
 void fontInit(const char *fontFile)
 {
-    numberSmall.init(fontFile, 35);
-    numberMedium.init(fontFile, 45);
+    numberSmall.init(fontFile, 20);
+    numberMedium.init(fontFile, 35);
     numberLarge.init(fontFile, 55);
 }
 
@@ -200,19 +200,11 @@ extern void loadBlockMetadata()
     fontInit(fontFile);
     initBlockStyle();
 
-    /**
-     *  Add animation here
-     */
-
 }
 
 extern void unloadBlockMetadata()
 {
     fontFree();
-
-    /**
-     *  Add animation here
-     */
 }
 
 //============ CLASS ATTRIBUTES =============
@@ -232,6 +224,20 @@ Block::Block(int row, int col, int value)
     mBlockTexture = new Texture();
 }
 
+Block::~Block()
+{
+    delete mTextInBlockTexture;
+    delete mBlockTexture;
+
+    font.free();
+}
+
+void Block::set_value(int value)
+{
+    this->value = value;
+
+}
+
 /** @brief Render block
  *
  * @param x: x position
@@ -248,7 +254,9 @@ void Block::render(int x, int y)
     mBlockTexture->setAsRenderTarget();
     gRender.setDrawColor(getBlockBackgroundColor(get_value()));
     gRender.clear();
-    mTextInBlockTexture->render((blockSize - mTextInBlockTexture->getWidth())/2, (blockSize - mTextInBlockTexture->getHeight())/2, NULL);
+    mTextInBlockTexture->render((blockSize - mTextInBlockTexture->getWidth())/2,
+                                (blockSize - mTextInBlockTexture->getHeight())/2,
+                                 NULL);
 
     gRender.setRenderTarget(NULL);
     mBlockTexture->render(x + mX, y + mY, NULL);

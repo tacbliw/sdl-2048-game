@@ -62,6 +62,20 @@ int main( int argc, char * argv[] )
                 break;
             }
             break;
+
+        case SDL_MOUSEBUTTONDOWN:
+            switch (event.button.button)
+            {
+            case SDL_BUTTON_LEFT:
+                /**< MOUSE CLICK HERE */
+                g->newGame();
+                break;
+
+            default:
+                break;
+            }
+            break;
+
         case SDL_QUIT:
             quit = true;
             break;
