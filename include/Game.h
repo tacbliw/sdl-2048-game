@@ -2,6 +2,7 @@
 #define GAME_H
 #include <Block.h>
 #include <BlockBoard.h>
+#include <ScoreBoard.h>
 #include <vector>
 
 /** @brief Direction
@@ -16,20 +17,38 @@ class Game
         Game();
         virtual ~Game();
         void init(int size);
+
+        // support functions
         std::vector< std::vector<Block *> > blankGrid();
+        void storeBoard();
+        bool gridChanged();
+        bool noMove();
+
+        // game behavior
         void addRandomBlock();
-        void render();
+        void gameOver();
+        void newGame();
+
+        //
         BlockBoard* getBlockBoard() { return mBlockBoard; }
+
+        // game controler
         void move(DIR dir);
+
+        // render and animation
+        void render();
         void update(int delta_ms);
 
-    protected:
-
     private:
+        // local variables
         int mSize;
         std::vector< std::vector<Block *> > mBlock;
+        std::vector< std::vector<int> > previousMBlock;
         friend class BlockBoard;
         BlockBoard *mBlockBoard;
+        ScoreBoard *mScoreBoard;
+
+        // gameplay functions
         void up();
         void down();
         void left();

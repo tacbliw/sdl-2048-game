@@ -57,6 +57,18 @@ int main( int argc, char * argv[] )
                         break;
                     }
                 }
+                else if (e.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    switch (e.button.button)
+                    {
+                    case SDL_BUTTON_LEFT:
+                        g->newGame();
+                        break;
+
+                    default:
+                        break;
+                    }
+                }
             }
             Uint32 new_ticks = SDL_GetTicks();
             int delta_ms = new_ticks - ticks;

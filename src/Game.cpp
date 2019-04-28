@@ -33,13 +33,17 @@ void Game::init(int size)
     int len = size * size;
     int middle = 100 * mSize + 15 * (mSize + 1);
     mBlockBoard = new BlockBoard(this, (SCREEN_WIDTH - middle)/2, (SCREEN_HEIGHT - middle)/2);
+    mScoreBoard = new ScoreBoard();
 
     mBlock = blankGrid();
+    previousMBlock = std::vector< std::vector<int> > (mSize, std::vector<int>(mSize, 0));
 
     addRandomBlock();
     addRandomBlock();
 
 }
+
+// ================= SUPPORT FUNCTIONS ===================
 
 /** \brief Create an empty 4x4 grid filled with zeros
  *
@@ -48,10 +52,10 @@ void Game::init(int size)
  */
 std::vector< std::vector<Block *> > Game::blankGrid()
 {
-    std::vector< std::vector<Block *> > grid(4, std::vector<Block *>(4, nullptr));
-    for (int i = 0; i < 4; i++)
+    std::vector< std::vector<Block *> > grid(mSize, std::vector<Block *>(mSize, nullptr));
+    for (int i = 0; i < mSize; i++)
     {
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < mSize; j++)
         {
             grid[i][j] = nullptr;
         }
@@ -60,6 +64,82 @@ std::vector< std::vector<Block *> > Game::blankGrid()
     return grid;
 }
 
+/** \brief store current values of all blocks in boardValueBackup to compare later.
+ *
+ * \return void
+ *
+ */
+void Game::storeBoard()
+{
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            if (mBlock[i][j] != nullptr)
+                this->previousMBlock[i][j] = mBlock[i][j]->get_value();
+
+            else
+            {
+                this->previousMBlock[i][j] = 0;
+            }
+        }
+    }
+}
+
+/** \brief Compare mBlock with previousMBlock, return true if different.
+ *
+ * \return bool
+ *
+ */
+bool Game::gridChanged()
+{
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            if (mBlock[i][j] != nullptr &&
+                mBlock[i][j]->get_value() != previousMBlock[i][j])
+                    return true;
+        }
+    }
+    return false;
+}
+
+
+/** \brief Check if no move left
+ *
+ * \return bool
+ *
+ *  No move means no ZERO in the board and no SAME BLOCK next to each other.
+ */
+bool Game::noMove()
+{
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0; j < mSize; j++)
+        {
+            if (mBlock[i][j] == nullptr ||
+                (i < mSize - 1 && mBlock[i+1][j] == nullptr) ||
+                (j < mSize - 1 && mBlock[i][j+1] == nullptr))
+            {
+                return false;
+            }
+
+            if (i < mSize - 1 && mBlock[i][j]->get_value() == mBlock[i+1][j]->get_value())
+            {
+                return false;
+            }
+
+            if (j < mSize - 1 && mBlock[i][j]->get_value() == mBlock[i][j+1]->get_value())
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// ================= GAME BEHAVIOURS ====================
 /** @brief Add random block
  *
  * @return void
@@ -69,9 +149,9 @@ void Game::addRandomBlock()
 {
     srand(time(NULL));
     std::vector <Position> blanks;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < mSize; i++)
     {
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < mSize; j++)
         {
             if (mBlock[i][j] == nullptr)
             {
@@ -87,11 +167,39 @@ void Game::addRandomBlock()
         int randomPosition = randomNumber % blanks.size();
         randomNumber = rand();
 
-        mBlock[blanks[randomPosition].row][blanks[randomPosition].col] = new Block(blanks[randomPosition].row, blanks[randomPosition].col, randomNumber % 2 ? 2 : 4);
+        mBlock[blanks[randomPosition].row][blanks[randomPosition].col] = new Block(blanks[randomPosition].row,
+                                                                                   blanks[randomPosition].col,
+                                                                                   randomNumber % 2 ? 2 : 4);
     }
 }
 
+/** \brief reset all game attributes, start a new game.
+ *
+ * \return void
+ *
+ */
+void Game::newGame()
+{
+    mBlock = blankGrid();
+    mScoreBoard->resetPoint();
 
+    addRandomBlock();
+    addRandomBlock();
+}
+
+/** \brief called when no move can be done left, mean the game is over.
+ *
+ * \return void
+ *
+ */
+void Game::gameOver()
+{
+    printf("Game Over!!\n");
+
+    /**< Add game over render actions here */
+}
+
+// ==============  RENDER =====================
 /** @brief Render board game
  *
  * @return void
@@ -103,16 +211,24 @@ void Game::render()
 }
 
 
-
+// ============== GAMEPLAY ====================
 void Game::moveVer(int x, int y, int d)
 {
-	if (mBlock[x + d][y] != nullptr && mBlock[x][y] != nullptr && mBlock[x + d][y]->get_value() == mBlock[x][y]->get_value() && mBlock[x][y]->mergeFrom1 == nullptr && mBlock[x + d][y]->mergeFrom1 == nullptr) // merge
+	if (mBlock[x + d][y] != nullptr &&
+        mBlock[x][y] != nullptr &&
+        mBlock[x + d][y]->get_value() == mBlock[x][y]->get_value() &&
+        mBlock[x][y]->mergeFrom1 == nullptr &&
+        mBlock[x + d][y]->mergeFrom1 == nullptr) // merge
 	{
 	    Block *f = mBlock[x][y];
 		Block *l = mBlock[x + d][y];
         mBlock[x][y] = nullptr;
 
 		mBlock[x + d][y] = new Block(x + d, y, mBlock[x + d][y]->get_value() * 2);
+
+		// adding score
+		mScoreBoard->addPoint(mBlock[x + d][y]->get_value());
+
 		mBlock[x + d][y]->mergeFrom1 = f;
 		mBlock[x + d][y]->mergeFrom2 = l;
 	}
@@ -140,13 +256,21 @@ void Game::moveVer(int x, int y, int d)
 
 void Game::moveHor(int x, int y, int d)
 {
-	if (mBlock[x][y] != nullptr && mBlock[x][y + d] != nullptr && mBlock[x][y + d]->get_value() == mBlock[x][y]->get_value() && mBlock[x][y]->mergeFrom1 == nullptr && mBlock[x][y + d]->mergeFrom1 == nullptr) // merge
+	if (mBlock[x][y] != nullptr &&
+        mBlock[x][y + d] != nullptr &&
+        mBlock[x][y + d]->get_value() == mBlock[x][y]->get_value() &&
+        mBlock[x][y]->mergeFrom1 == nullptr &&
+        mBlock[x][y + d]->mergeFrom1 == nullptr) // merge
 	{
 		Block *f = mBlock[x][y];
 		Block *l = mBlock[x][y + d];
 		mBlock[x][y] = nullptr;
 
 		mBlock[x][y + d] = new Block(x, y + d, mBlock[x][y + d]->get_value() * 2);
+
+		// adding score
+		mScoreBoard->addPoint(mBlock[x][y + d]->get_value());
+
 		mBlock[x][y + d]->mergeFrom1 = f;
 		mBlock[x][y + d]->mergeFrom2 = l;
 	}
@@ -230,6 +354,8 @@ void Game::right()
 
 void Game::move(DIR dir)
 {
+    storeBoard(); // backup the current board to compare
+
     for (int i = 0; i < mSize; i++)
     {
         for (int j = 0; j < mSize; j++)
@@ -279,7 +405,17 @@ void Game::move(DIR dir)
         }
     }
 
-    addRandomBlock();
+    printf("Player's score: %d\n", mScoreBoard->getPoint());
+
+    if (noMove())
+    {
+        gameOver();
+    }
+
+    if (gridChanged())
+    {
+        addRandomBlock();
+    }
 
 //    for (int i = 0; i < 4; i++)
 //    {
