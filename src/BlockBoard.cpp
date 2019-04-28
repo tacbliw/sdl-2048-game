@@ -12,12 +12,7 @@ const int gridSpacing = 15;
  * @param pGame Game*
  * Game pointer is set to get size of board.
  */
-BlockBoard::BlockBoard(Game *pGame, int _mX, int _mY) : mX(_mX), mY(_mY)
-{
-    m_pGame = pGame;
-
-
-}
+BlockBoard::BlockBoard(Game *pGame, int _mX, int _mY) : mX(_mX), mY(_mY), m_pGame(pGame) {}
 
 /** @brief Render a board and holder to screen
  *
@@ -56,6 +51,11 @@ void BlockBoard::render(std::vector< std::vector<Block*> > block)
         {
             if (block[i][j] != nullptr)
             {
+                if (block[i][j]->mergeFrom1 != nullptr)
+                {
+                    block[i][j]->mergeFrom1->render(mX + gridSpacing, mY + gridSpacing);
+                    block[i][j]->mergeFrom2->render(mX + gridSpacing, mY + gridSpacing);
+                }
                 block[i][j]->render(mX + gridSpacing, mY + gridSpacing);
             }
         }

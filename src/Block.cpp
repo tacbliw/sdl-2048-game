@@ -174,7 +174,7 @@ std::shared_ptr<Animation> makeMoveAnimation(int row1, int col1, int row2, int c
     calPosFromXY(row2, col2, &x2, &y2);
     //printf("%d:%d to %d:%d \n", row1, col1, row2, col2);
 
-    auto animation = std::make_shared<Animation>(100, TMFUNC_EASE_IN_OUT);
+    auto animation = std::make_shared<Animation>(100);
     if (row1 == row2)
     {
         auto t = animation->createTransition(1);

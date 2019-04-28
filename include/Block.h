@@ -32,6 +32,9 @@ class Block
         void set_col(int col) { this->col = col; }
         void set_value(int value) { this->value = value; }
 
+        void set_mX(int mX) { this->mX = mX; }
+        void set_mY(int mY) { this->mY = mY; }
+
         void render(int x, int y);
 
         void update(int delta_ms);

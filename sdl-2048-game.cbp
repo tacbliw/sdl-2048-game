@@ -50,7 +50,6 @@
 		<Unit filename="include/Render.h" />
 		<Unit filename="include/SDLUtils.h" />
 		<Unit filename="include/Texture.h" />
-		<Unit filename="include/UnitBezier.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Animation.cpp" />
 		<Unit filename="src/Block.cpp" />

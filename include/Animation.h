@@ -4,15 +4,10 @@
 #include <memory>
 #include <Block.h>
 
-
-
-enum TimingFunction
+enum MODE
 {
-	TMFUNC_LINEAR,
-	TMFUNC_EASE,
-	TMFUNC_EASE_IN,
-	TMFUNC_EASE_OUT,
-	TMFUNC_EASE_IN_OUT
+    X_TRAN,
+    Y_TRAN
 };
 
 class ValueTransition
@@ -27,7 +22,7 @@ private:
     std::vector<PercentValuePair> mPairs;
 public:
     ValueTransition(int ID) : ID(ID) {}
-    double calculate(int elapsed, int duration, TimingFunction timingFunc);
+    double calculate(int elapsed, int duration);
     int propertyID() { return ID; }
     double initialValue() { return mPairs.front().value; }
     void add(int percent, double value);
@@ -38,9 +33,7 @@ class Animation
 {
     friend class AnimationExecutor;
     public:
-        Animation(int duration, TimingFunction timeFunc, int delay = 0): mDuration(duration),
-                                                                         mTimingFunc(timeFunc),
-                                                                         mDelay(delay) {}
+        Animation(int duration): mDuration(duration) {}
         virtual ~Animation();
 
         ValueTransition* createTransition(int ID);
@@ -48,7 +41,6 @@ class Animation
     private:
         int mDelay;
         int mDuration;
-        TimingFunction mTimingFunc;
         std::vector<ValueTransition *> mTransitions;
 };
 
@@ -58,9 +50,8 @@ class AnimationExecutor
 public:
     AnimationExecutor(std::shared_ptr<Animation> animation, Block* blockTarget) : mAnimation(animation),
                                                                                   mAlive(true),
-                                                                                  mElapsed(-animation->mDelay),
+                                                                                  mElapsed(0),
                                                                                   mDuration(animation->mDuration),
-                                                                                  mTimingFunction(animation->mTimingFunc),
                                                                                   mTransitions(animation->mTransitions),
                                                                                   mBlockTarget(blockTarget) {}
     void init();
@@ -76,7 +67,6 @@ private:
     bool mAlive;
     int mElapsed;
     int mDuration;
-    TimingFunction mTimingFunction;
     std::vector<ValueTransition *> &mTransitions;
 
 };

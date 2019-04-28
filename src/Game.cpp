@@ -33,22 +33,11 @@ void Game::init(int size)
     int len = size * size;
     int middle = 100 * mSize + 15 * (mSize + 1);
     mBlockBoard = new BlockBoard(this, (SCREEN_WIDTH - middle)/2, (SCREEN_HEIGHT - middle)/2);
-    //mBlockBoard->setPosition((SCREEN_WIDTH - mBlockBoard->getWidth())/2,
-    //                        (SCREEN_HEIGHT - mBlockBoard->getWidth())/2);
 
     mBlock = blankGrid();
 
-    //mBlock[1][1]->set_value(2);
     addRandomBlock();
     addRandomBlock();
-
-
-
-    /*for (int i = 0; i < mSize * mSize; i++)
-    {
-        if (mBlock[i] != nullptr)
-            printf("%d ", mBlock[i]->get_value());
-    }*/
 
 }
 
@@ -120,7 +109,7 @@ void Game::moveVer(int x, int y, int d)
 	if (mBlock[x + d][y] != nullptr && mBlock[x][y] != nullptr && mBlock[x + d][y]->get_value() == mBlock[x][y]->get_value() && mBlock[x][y]->mergeFrom1 == nullptr && mBlock[x + d][y]->mergeFrom1 == nullptr) // merge
 	{
 	    Block *f = mBlock[x][y];
-		Block *l = mBlock[x][y + d];
+		Block *l = mBlock[x + d][y];
         mBlock[x][y] = nullptr;
 
 		mBlock[x + d][y] = new Block(x + d, y, mBlock[x + d][y]->get_value() * 2);
@@ -129,7 +118,7 @@ void Game::moveVer(int x, int y, int d)
 	}
 	else if (mBlock[x + d][y] == nullptr && mBlock[x][y] != nullptr)
 	{
-		mBlock[x + d][y] = mBlock[x][y];
+        mBlock[x + d][y] = mBlock[x][y];
 		mBlock[x][y] = nullptr;
 	}
 
@@ -151,18 +140,6 @@ void Game::moveVer(int x, int y, int d)
 
 void Game::moveHor(int x, int y, int d)
 {
-	// 	for (int i = 0; i < 4; ++i)
-	// {
-	// 	for (int j = 0; j < 4; ++j)
-	// 	{
-	// 		if (mBlock[i][j] != nullptr)
-	// 			cout << mBlock[i][j]->data << " ";
-	// 		else
-	// 			cout << 0 << " ";
-	// 	}
-	// 	cout << endl;
-	// }
-	// cout << endl;
 	if (mBlock[x][y] != nullptr && mBlock[x][y + d] != nullptr && mBlock[x][y + d]->get_value() == mBlock[x][y]->get_value() && mBlock[x][y]->mergeFrom1 == nullptr && mBlock[x][y + d]->mergeFrom1 == nullptr) // merge
 	{
 		Block *f = mBlock[x][y];
@@ -257,17 +234,15 @@ void Game::move(DIR dir)
     {
         for (int j = 0; j < mSize; j++)
         {
-            if (mBlock[i][j] != nullptr)
+            if (mBlock[i][j] != nullptr && mBlock[i][j]->mergeFrom1 != nullptr)
             {
+                delete mBlock[i][j]->mergeFrom1;
                 mBlock[i][j]->mergeFrom1 = nullptr;
+                delete mBlock[i][j]->mergeFrom2;
                 mBlock[i][j]->mergeFrom2 = nullptr;
             }
         }
     }
-    //printf("moved + %d\n", dir);
-    //mBlock[1][1]->planMove(1, 3);
-    //mBlock[1][1]->set_value(0);
-    //mBlock[1][3]->set_value(2);
 
     switch (dir)
     {
@@ -290,13 +265,34 @@ void Game::move(DIR dir)
         for (int j = 0; j < mSize; j++)
         {
             if (mBlock[i][j] != nullptr)
-                if (!(mBlock[i][j]->get_row() == i && mBlock[i][j]->get_col() == j))
+            {
+                if (mBlock[i][j]->mergeFrom1 != nullptr)
+                {
+                    mBlock[i][j]->mergeFrom1->planMove(i, j);
+                    mBlock[i][j]->mergeFrom2->planMove(i, j);
+                }
+                if (!((mBlock[i][j]->get_row() == i) && (mBlock[i][j]->get_col() == j)))
+                {
                     mBlock[i][j]->planMove(i, j);
+                }
+            }
         }
     }
 
     addRandomBlock();
 
+//    for (int i = 0; i < 4; i++)
+//    {
+//        for (int j = 0; j < 4; j++)
+//        {
+//            if (mBlock[i][j] != nullptr)
+//                printf("%d ", mBlock[i][j]->get_value());
+//            else
+//                printf("0 ");
+//        }
+//        printf("\n");
+//    }
+//    printf("\n");
 }
 
 void Game::update(int delta_ms)
@@ -307,7 +303,15 @@ void Game::update(int delta_ms)
         for (int j = 0; j < mSize; j++)
         {
             if (mBlock[i][j] != nullptr)
+            {
+                if (mBlock[i][j]->mergeFrom1 != nullptr)
+                {
+                    mBlock[i][j]->mergeFrom1->update(delta_ms);
+                    mBlock[i][j]->mergeFrom2->update(delta_ms);
+                }
+                //printf("update block \n");
                 mBlock[i][j]->update(delta_ms);
+            }
         }
     }
 }
