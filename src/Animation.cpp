@@ -6,9 +6,9 @@ Animation::~Animation()
     //dtor
 }
 
-double ValueTransition::calculate(int elapsed, int duration)
+double Animation::calculate(int elapsed, int duration)
 {
-    auto iter = mPairs.cbegin();
+    auto iter = infoTrans.cbegin();
 
 //    for (int i = 0; i < mPairs.size(); i++)
 //    {
@@ -25,15 +25,16 @@ double ValueTransition::calculate(int elapsed, int duration)
     return iter->value + (elapsed * 100 / duration)/100.0 * ((iter + 1)->value - iter->value);
 }
 
-void ValueTransition::add(int percent, double value)
+void Animation::add(int percent, double value)
 {
-    PercentValuePair p;
-    p.percent = percent;
-    p.value = value;
-    mPairs.push_back(p);
+    TranstionInformation ti;
+    ti.percent = percent;
+    ti.value = value;
+    infoTrans.push_back(ti);
 }
 
-void AnimationExecutor::progress(int delta_ms)
+
+void Animation::progress(int delta_ms)
 {
     if (!mAlive)
         return;
@@ -43,32 +44,26 @@ void AnimationExecutor::progress(int delta_ms)
         return;
     if (mElapsed > mDuration)
         mAlive = false;
-    for (auto iter = mTransitions.cbegin(); iter != mTransitions.cend(); iter++)
-    {
+    // for (auto iter = mTransitions.cbegin(); iter != mTransitions.cend(); iter++)
+    // {
         //printf("set ID = %d, value = %f\n", (*iter)->propertyID(), (*iter)->calculate(mElapsed, mDuration, mTimingFunction));
-        mBlockTarget->setProperty((*iter)->propertyID(), (*iter)->calculate(mElapsed, mDuration));
-    }
+    if (mMode == X_TRAN)
+        mBlockTarget->set_mX(calculate(mElapsed, mDuration));
+    else
+        mBlockTarget->set_mY(calculate(mElapsed, mDuration));
+    // }
 }
 
-void AnimationExecutor::init()
+void Animation::init()
 {
-    for (auto iter = mTransitions.cbegin(); iter != mTransitions.cend(); iter++)
-    {
-        mBlockTarget->setProperty((*iter)->propertyID(), (*iter)->initialValue());
-    }
+    if (mMode == X_TRAN)
+        mBlockTarget->set_mX(infoTrans.front().value);
+    else
+        mBlockTarget->set_mY(infoTrans.front().value);
 }
 
-void AnimationExecutor::end()
+void Animation::end()
 {
     mElapsed = 0;
     progress(mDuration);
 }
-
-/////
-ValueTransition* Animation::createTransition(int ID)
-{
-    ValueTransition *vt = new ValueTransition(ID);
-    mTransitions.push_back(vt);
-    return vt;
-}
-/////

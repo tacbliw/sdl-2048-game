@@ -17,7 +17,6 @@ extern void unloadBlockMetadata();
  * @param col Y coordinate of the Block.
  *
  */
-class AnimationExecutor;
 class Animation;
 class Block
 {
@@ -41,7 +40,7 @@ class Block
 
         void setProperty(int ID, double value);
         void attachAnimation(std::shared_ptr<Animation> animation);
-        std::shared_ptr<AnimationExecutor> mAnimationExecutor;
+        std::shared_ptr<Animation> mAnimation;
         void planMove(int row, int col);
 
         Block *mergeFrom1, *mergeFrom2;

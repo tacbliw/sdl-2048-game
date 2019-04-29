@@ -1,6 +1,5 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
-
 #include <vector>
 #include <memory>
 #include <Block.h>
@@ -24,14 +23,13 @@ class Animation
 
         virtual ~Animation();
 
-        void add(int percent, double value);//
+        void add(int percent, int value);//
 
-        double calculate(int elapsed, int duration);
+        double calculate(int elapsed);
         void init();//
         void progress(int delta_ms);//
-        void setMode(MODE mode) { this->mMode = mode; }//
+        void setMode(MODE mode) { this->mode = mode; }//
 
-        void end();
 
     private:
         int mDuration;
