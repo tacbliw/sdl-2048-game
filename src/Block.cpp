@@ -6,6 +6,7 @@
 #include "Texture.h"
 #include "Render.h"
 #include "Font.h"
+#include "Animation.h"
 
 
 /** Small change to help the game run smoother.
@@ -167,25 +168,25 @@ void calPosFromXY(int row, int col, int *x, int *y)
     *y = row * (blockSize + gridSpacing);
 }
 
-std::shared_ptr<Animation> makeMoveAnimation(int row1, int col1, int row2, int col2)
+std::shared_ptr<Animation> makeMoveAnimation(Block* block, int row1, int col1, int row2, int col2)
 {
     int x1, y1, x2, y2;
     calPosFromXY(row1, col1, &x1, &y1);
     calPosFromXY(row2, col2, &x2, &y2);
     //printf("%d:%d to %d:%d \n", row1, col1, row2, col2);
 
-    auto animation = std::make_shared<Animation>(100);
+    auto animation = std::make_shared<Animation>(100, block);
     if (row1 == row2)
     {
-        auto t = animation->createTransition(1);
-        t->add(0, x1);
-        t->add(100, x2);
+        animation->setMode(X_TRAN);
+        animation->add(0, x1);
+        animation->add(100, x2);
     }
     else
     {
-        auto t = animation->createTransition(2);
-        t->add(0, y1);
-        t->add(100, y2);
+        animation->setMode(Y_TRAN);
+        animation->add(0, y1);
+        animation->add(100, y2);
     }
 
     //printf("make move!!\n");
@@ -260,9 +261,9 @@ void Block::render(int x, int y)
 
 void updateBlock(Block *block, int delta_ms)
 {
-    if(block->mAnimationExecutor)
+    if(block->mAnimation)
     {
-        block->mAnimationExecutor->progress(delta_ms);
+        block->mAnimation->progress(delta_ms);
     }
 }
 void Block::update(int delta_ms)
@@ -290,13 +291,13 @@ void Block::setProperty(int ID, double value)
 
 void Block::attachAnimation(std::shared_ptr<Animation> animation)
 {
-    mAnimationExecutor = std::make_shared<AnimationExecutor>(animation, this);
-    mAnimationExecutor->init();
+    mAnimation = animation;
+    mAnimation->init();
 }
 
 void Block::planMove(int toRow, int toCol)
 {
-    attachAnimation(makeMoveAnimation(row, col, toRow, toCol));
+    attachAnimation(makeMoveAnimation(this, row, col, toRow, toCol));
     row = toRow;
     col = toCol;
     //printf("row: %d, col: %d\n", row, col);
