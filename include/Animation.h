@@ -20,9 +20,7 @@ class Animation
             int percent;
             double value;
         };
-        Animation(int duration, Block* blockTarget): mDuration(duration), mBlockTarget(blockTarget), mElapsed(0) {}
-
-        virtual ~Animation();
+        Animation(int duration, Block* blockTarget): mDuration(duration), mBlockTarget(blockTarget), mElapsed(0), mAlive(true) {}
 
         void add(int percent, double value);//
 
@@ -30,8 +28,6 @@ class Animation
         void init();//
         void progress(int delta_ms);//
         void setMode(MODE mode) { this->mMode = mode; }//
-
-        void end();
 
     private:
         int mDuration;

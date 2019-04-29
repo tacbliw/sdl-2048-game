@@ -167,9 +167,7 @@ void Game::addRandomBlock()
         int randomPosition = randomNumber % blanks.size();
         randomNumber = rand();
 
-        mBlock[blanks[randomPosition].row][blanks[randomPosition].col] = new Block(blanks[randomPosition].row,
-                                                                                   blanks[randomPosition].col,
-                                                                                   randomNumber % 2 ? 2 : 4);
+        mBlock[blanks[randomPosition].row][blanks[randomPosition].col] = new Block(blanks[randomPosition].row, blanks[randomPosition].col, randomNumber % 100 < 90 ? 2 : 4);
     }
 }
 
