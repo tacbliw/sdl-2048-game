@@ -53,7 +53,7 @@ SDL_Color backgroundColors[] = {
     {240, 225, 200}, // 4
     {240, 177, 120}, // 8
     {245, 150, 100}, // 16
-    {240, 203, 100}, // 32
+    {252, 120, 95}, // 32
     {250,  93,  60}, // 64
     {240, 205, 115}, // 128
     {240, 205,  97}, // 256
@@ -120,6 +120,22 @@ SDL_Color getBlockTextColor(int blockValue)
     }
 }
 
+Font* getBlockTextFont(int blockValue)
+{
+    if (blockValue < 128)
+    {
+        return &numberLarge;
+    }
+    else if (blockValue >= 128 && blockValue < 1024)
+    {
+        return &numberMedium;
+    }
+    else
+    {
+        return &numberSmall;
+    }
+}
+
 //============== BLOCK STYLE ================
 void initBlockStyle()
 {
@@ -173,7 +189,6 @@ std::shared_ptr<Animation> makeMoveAnimation(Block* block, int row1, int col1, i
     int x1, y1, x2, y2;
     calPosFromXY(row1, col1, &x1, &y1);
     calPosFromXY(row2, col2, &x2, &y2);
-    //printf("%d:%d to %d:%d \n", row1, col1, row2, col2);
 
     auto animation = std::make_shared<Animation>(100, block);
     if (row1 == row2)
@@ -232,18 +247,19 @@ Block::Block(int row, int col, int value)
     mBlockTexture = new Texture();
 
     std::stringstream ss;
-    ss << get_value();
-    mTextInBlockTexture->loadTextureFromText(&numberLarge, ss.str().c_str(), getBlockTextColor(get_value()));
+    ss << value;
+    mTextInBlockTexture->loadTextureFromText(getBlockTextFont(value), ss.str().c_str(), getBlockTextColor(value));
     mBlockTexture->createBlankTexture(SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, blockSize, blockSize);
 
     mBlockTexture->setAsRenderTarget();
-    gRender.setDrawColor(getBlockBackgroundColor(get_value()));
+    gRender.setDrawColor(getBlockBackgroundColor(value));
     gRender.clear();
     mTextInBlockTexture->render((blockSize - mTextInBlockTexture->getWidth())/2, (blockSize - mTextInBlockTexture->getHeight())/2, NULL);
 
     gRender.setRenderTarget(NULL);
     mergeFrom1 = nullptr;
     mergeFrom2 = nullptr;
+    mAnimation = nullptr;
 }
 
 /** @brief Render block
@@ -256,12 +272,11 @@ void Block::render(int x, int y)
 {
 
     mBlockTexture->render(x + mX, y + mY, NULL);
-    //gRender.present();
 }
 
 void updateBlock(Block *block, int delta_ms)
 {
-    if(block->mAnimation)
+    if(block->mAnimation != nullptr)
     {
         block->mAnimation->progress(delta_ms);
     }
@@ -269,25 +284,8 @@ void updateBlock(Block *block, int delta_ms)
 void Block::update(int delta_ms)
 {
     updateBlock(this, delta_ms);
-//    if (mergeFrom1 != nullptr)
-//    {
-//        updateBlock(mergeFrom1, delta_ms);
-//        updateBlock(mergeFrom2, delta_ms);
-//    }
 }
 
-void Block::setProperty(int ID, double value)
-{
-    switch (ID)
-    {
-    case 1:
-        mX = static_cast<int>(value);
-        break;
-    case 2:
-        mY = static_cast<int>(value);
-        break;
-    }
-}
 
 void Block::attachAnimation(std::shared_ptr<Animation> animation)
 {
@@ -300,5 +298,4 @@ void Block::planMove(int toRow, int toCol)
     attachAnimation(makeMoveAnimation(this, row, col, toRow, toCol));
     row = toRow;
     col = toCol;
-    //printf("row: %d, col: %d\n", row, col);
 }
