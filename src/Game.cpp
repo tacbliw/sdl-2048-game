@@ -33,7 +33,7 @@ void Game::init(int size)
     int len = size * size;
     int middle = 100 * mSize + 15 * (mSize + 1);
     mBlockBoard = new BlockBoard(this, (SCREEN_WIDTH - middle)/2, (SCREEN_HEIGHT - middle)/2);
-    mScoreBoard = new ScoreBoard();
+    mScoreBoard = new ScoreBoard("Score", (SCREEN_WIDTH - middle)/2 + mBlockBoard->getWidth() - 100, 20);
 
     mBlock = blankGrid();
     previousMBlock = std::vector< std::vector<int> > (mSize, std::vector<int>(mSize, 0));
@@ -206,6 +206,7 @@ void Game::gameOver()
 void Game::render()
 {
     mBlockBoard->render(mBlock);
+    mScoreBoard->render();
 }
 
 
@@ -403,7 +404,10 @@ void Game::move(DIR dir)
         }
     }
 
-    printf("Player's score: %d\n", mScoreBoard->getPoint());
+
+
+    //printf("Player's score: %d\n", mScoreBoard->getPoint());
+//    mScoreBoard->render();
 
     if (noMove())
     {

@@ -10,6 +10,8 @@
 #include "Block.h"
 #include "BlockBoard.h"
 #include "Game.h"
+#include "Button.h"
+#include "ScoreBoard.h"
 
 int main( int argc, char * argv[] )
 {
@@ -23,12 +25,20 @@ int main( int argc, char * argv[] )
     if (InitSDL())
     {
         loadBlockMetadata();
+        loadButtonMetadata();
+        loadScoreBoardMetadata();
+
         gRender.setDrawColor({255, 255, 255});
         gRender.clear();
         Game *g = new Game;
         g->init(4);
         g->render();
         gRender.present();
+
+        Button *newGameBtn = new Button("New game");
+        newGameBtn->setCallBackFunc( [=] { g->newGame(); } );
+        newGameBtn->setPosition((SCREEN_WIDTH - g->getBlockBoard()->getWidth()) / 2, 25);
+
 
         bool quit = false;
         SDL_Event e;
@@ -59,15 +69,7 @@ int main( int argc, char * argv[] )
                 }
                 else if (e.type == SDL_MOUSEBUTTONDOWN)
                 {
-                    switch (e.button.button)
-                    {
-                    case SDL_BUTTON_LEFT:
-                        g->newGame();
-                        break;
-
-                    default:
-                        break;
-                    }
+                    newGameBtn->handleEvent(&e);
                 }
             }
             Uint32 new_ticks = SDL_GetTicks();
@@ -76,6 +78,7 @@ int main( int argc, char * argv[] )
             gRender.setDrawColor({255, 255, 255});
             gRender.clear();
             g->render();
+            newGameBtn->render();
             gRender.present();
             g->update(delta_ms);
         }
