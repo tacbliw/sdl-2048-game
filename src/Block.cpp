@@ -262,6 +262,14 @@ Block::Block(int row, int col, int value)
     mAnimation = nullptr;
 }
 
+Block::~Block()
+{
+    if (mTextInBlockTexture != NULL)
+        delete mTextInBlockTexture;
+    if (mBlockTexture != NULL)
+        delete mBlockTexture;
+}
+
 /** @brief Render block
  *
  * @param x: x position

@@ -8,6 +8,8 @@
 #include <time.h>
 #include "SDLUtils.h"
 
+
+
 struct Position {int row; int col;};
 
 Game::Game()
@@ -29,7 +31,7 @@ Game::~Game()
 void Game::init(int size)
 {
     mSize = size;
-
+    mGameOver = false;
     int len = size * size;
     int middle = 100 * mSize + 15 * (mSize + 1);
     mBlockBoard = new BlockBoard(this, (SCREEN_WIDTH - middle)/2, (SCREEN_HEIGHT - middle)/2);
@@ -178,6 +180,7 @@ void Game::addRandomBlock()
  */
 void Game::newGame()
 {
+    mGameOver = false;
     mBlock = blankGrid();
     mScoreBoard->resetPoint();
 
@@ -192,9 +195,7 @@ void Game::newGame()
  */
 void Game::gameOver()
 {
-    printf("Game Over!!\n");
-
-    /**< Add game over render actions here */
+    mGameOver = true;
 }
 
 // ==============  RENDER =====================
@@ -205,7 +206,7 @@ void Game::gameOver()
  */
 void Game::render()
 {
-    mBlockBoard->render(mBlock);
+    mBlockBoard->render();
     mScoreBoard->render();
 }
 

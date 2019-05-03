@@ -8,7 +8,7 @@ class BlockBoard
 {
     public:
         BlockBoard(Game* pGame, int _mX, int _mY);
-        void render(std::vector< std::vector<Block *> > block);
+        void render();
         void setPosition(int x, int y) {mX = x; mY = y;}
         int getWidth();
     private:
@@ -16,5 +16,7 @@ class BlockBoard
         int mY;
         Game *m_pGame;
 };
+
+extern void loadBlockBoardMetadata();
 
 #endif // BLOCKBOARD_H

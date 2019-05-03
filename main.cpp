@@ -27,6 +27,7 @@ int main( int argc, char * argv[] )
         loadBlockMetadata();
         loadButtonMetadata();
         loadScoreBoardMetadata();
+        loadBlockBoardMetadata();
 
         gRender.setDrawColor({255, 255, 255});
         gRender.clear();

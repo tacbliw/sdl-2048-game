@@ -22,6 +22,7 @@ class Block
 {
     public:
         Block(int row, int col, int value);
+        ~Block();
 
         int get_row() { return row; }
         int get_col() { return col; }

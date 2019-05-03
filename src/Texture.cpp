@@ -10,6 +10,7 @@
   */
 bool Texture::loadTextureFromText(Font *f, const char *text, SDL_Color fgColor)
 {
+    free();
     SDL_Texture *newTexture = NULL;
     SDL_Surface *textSurface = f->renderText(text, fgColor);
     if (textSurface == NULL)
@@ -82,4 +83,13 @@ bool Texture::createBlankTexture(Uint32 format, int access, int width, int heigh
 void Texture::setBlendMode()
 {
     SDL_SetTextureBlendMode(mTexture, SDL_BLENDMODE_BLEND);
+}
+
+void Texture::free()
+{
+    if (mTexture != NULL)
+    {
+        SDL_DestroyTexture(mTexture);
+        mTexture = NULL;
+    }
 }

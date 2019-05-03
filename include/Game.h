@@ -47,6 +47,7 @@ class Game
         friend class BlockBoard;
         BlockBoard *mBlockBoard;
         ScoreBoard *mScoreBoard;
+        bool mGameOver;
 
         // gameplay functions
         void up();

@@ -9,6 +9,7 @@
 class Texture
 {
     public:
+        ~Texture() { free(); }
         bool loadTexture(std::string path);
         bool loadTextureFromText(Font *f, const char *text, SDL_Color fgColor);
 
@@ -21,6 +22,8 @@ class Texture
         void setAsRenderTarget();
         bool createBlankTexture(Uint32 format, int access, int width, int height);
         void setBlendMode();
+
+        void free();
     private:
         SDL_Texture* mTexture;
         int mHeight;
