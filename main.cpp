@@ -66,6 +66,8 @@ int main( int argc, char * argv[] )
                     case SDLK_LEFT:
                         g->move(LEFT);
                         break;
+                    case SDLK_RETURN:
+                        g->addIntendedBlock(0, 0, 2048);
                     }
                 }
                 else if (e.type == SDL_MOUSEBUTTONDOWN)

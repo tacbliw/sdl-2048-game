@@ -30,7 +30,10 @@ Button::Button(const char *_text, int _x, int _y, int _w, int _h)
     mTexture->setAsRenderTarget();
     gRender.setDrawColor({ 0x8F, 0x7A, 0x66, 0xFF });
     gRender.clear();
-    mTextTexture->render((mTexture->getWidth() - mTextTexture->getWidth())/2, (mTexture->getHeight() - mTextTexture->getHeight())/2, NULL);
+    mTextTexture->render((mTexture->getWidth() - mTextTexture->getWidth())/2,
+                         (mTexture->getHeight() - mTextTexture->getHeight())/2,
+                         NULL
+                         );
 
     gRender.setRenderTarget(NULL);
 }
@@ -54,7 +57,10 @@ void Button::setSize(int w, int h)
 
 bool Button::isInside(int x, int y)
 {
-    if (x < mPosition.x || x > mPosition.x + mWidth || y < mPosition.y || y > mPosition.y + mHeight) return false; else return true;
+    if (x < mPosition.x || x > mPosition.x + mWidth || y < mPosition.y || y > mPosition.y + mHeight)
+        return false;
+    else
+        return true;
 }
 
 void Button::handleEvent(SDL_Event *e)

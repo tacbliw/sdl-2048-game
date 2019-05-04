@@ -38,8 +38,13 @@ ScoreBoard::ScoreBoard(const char *_title, int _x, int _y, int _w, int _h)
     gRender.clear();
 
 
-    mTextTexture->render((mTexture->getWidth() - mTextTexture->getWidth())/2, (mTexture->getHeight() - mTextTexture->getHeight())/3, NULL);
-    mPointTexture->render((mTexture->getWidth() - mPointTexture->getWidth())/2 + mPointTexture->getWidth()/2, (mTexture->getHeight() - mPointTexture->getHeight())*2/3, NULL);
+    mTextTexture->render((mTexture->getWidth() - mTextTexture->getWidth())/2,
+                         (mTexture->getHeight() - mTextTexture->getHeight())/3,
+                         NULL);
+
+    mPointTexture->render((mTexture->getWidth() - mPointTexture->getWidth())/2 + mPointTexture->getWidth()/2,
+                          (mTexture->getHeight() - mPointTexture->getHeight())*2/3,
+                          NULL);
 
     gRender.setRenderTarget(NULL);
 }
@@ -73,8 +78,13 @@ void ScoreBoard::render()
     gRender.setDrawColor({ 0xBB, 0xAD, 0xA0 });
     gRender.clear();
 
-    mTextTexture->render((mTexture->getWidth() - mTextTexture->getWidth())/2, (mTexture->getHeight() - mTextTexture->getHeight())/4, NULL);
-    mPointTexture->render((mTexture->getWidth() - mPointTexture->getWidth())/2, (mTexture->getHeight() - mPointTexture->getHeight())*3/4, NULL);
+    mTextTexture->render((mTexture->getWidth() - mTextTexture->getWidth())/2,
+                         (mTexture->getHeight() - mTextTexture->getHeight())/4,
+                         NULL);
+
+    mPointTexture->render((mTexture->getWidth() - mPointTexture->getWidth())/2,
+                          (mTexture->getHeight() - mPointTexture->getHeight())*3/4,
+                          NULL);
 
     gRender.setRenderTarget(NULL);
     mTexture->render(mPosition.x, mPosition.y);
