@@ -27,7 +27,9 @@ class Game
         // game behavior
         void addRandomBlock();
         void gameOver();
+        void win();
         void newGame();
+        void addIntendedBlock(int row, int col, int value);
 
         //
         BlockBoard* getBlockBoard() { return mBlockBoard; }
@@ -47,6 +49,8 @@ class Game
         friend class BlockBoard;
         BlockBoard *mBlockBoard;
         ScoreBoard *mScoreBoard;
+        bool mGameOver;
+        bool mWin, mWon;
 
         // gameplay functions
         void up();

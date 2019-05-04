@@ -63,7 +63,8 @@ bool InitSDL()
 
             if (TTF_Init() == -1)
             {
-                printf("sdl_tff could not initialize, download and put it in the right place... error: %s\n", SDL_GetError());
+                printf("sdl_tff could not initialize, download and put it in the right place... error: %s\n",
+                       SDL_GetError());
                 success = false;
             }
         }

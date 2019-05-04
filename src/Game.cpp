@@ -8,6 +8,8 @@
 #include <time.h>
 #include "SDLUtils.h"
 
+
+
 struct Position {int row; int col;};
 
 Game::Game()
@@ -29,11 +31,11 @@ Game::~Game()
 void Game::init(int size)
 {
     mSize = size;
-
+    mGameOver = false;
     int len = size * size;
     int middle = 100 * mSize + 15 * (mSize + 1);
     mBlockBoard = new BlockBoard(this, (SCREEN_WIDTH - middle)/2, (SCREEN_HEIGHT - middle)/2);
-    mScoreBoard = new ScoreBoard();
+    mScoreBoard = new ScoreBoard("Score", (SCREEN_WIDTH - middle)/2 + mBlockBoard->getWidth() - 100, 20);
 
     mBlock = blankGrid();
     previousMBlock = std::vector< std::vector<int> > (mSize, std::vector<int>(mSize, 0));
@@ -167,7 +169,10 @@ void Game::addRandomBlock()
         int randomPosition = randomNumber % blanks.size();
         randomNumber = rand();
 
-        mBlock[blanks[randomPosition].row][blanks[randomPosition].col] = new Block(blanks[randomPosition].row, blanks[randomPosition].col, randomNumber % 100 < 90 ? 2 : 4);
+        mBlock[blanks[randomPosition].row][blanks[randomPosition].col] = new Block(blanks[randomPosition].row,
+                                                                                   blanks[randomPosition].col,
+                                                                                   randomNumber % 100 < 90 ? 2 : 4
+                                                                                   );
     }
 }
 
@@ -178,6 +183,9 @@ void Game::addRandomBlock()
  */
 void Game::newGame()
 {
+    mGameOver = false;
+    mWin = false;
+    mWon = false;
     mBlock = blankGrid();
     mScoreBoard->resetPoint();
 
@@ -192,9 +200,26 @@ void Game::newGame()
  */
 void Game::gameOver()
 {
-    printf("Game Over!!\n");
+    mGameOver = true;
+}
 
-    /**< Add game over render actions here */
+void Game::win()
+{
+    mWin = true;
+    mWon = true;
+}
+
+/** \brief Add an intended block for debugging.
+ *
+ * \param row int
+ * \param col int
+ * \param value int
+ * \return void
+ *
+ */
+void Game::addIntendedBlock(int row, int col, int value)
+{
+    mBlock[row][col] = new Block(row, col, value);
 }
 
 // ==============  RENDER =====================
@@ -205,7 +230,8 @@ void Game::gameOver()
  */
 void Game::render()
 {
-    mBlockBoard->render(mBlock);
+    mBlockBoard->render();
+    mScoreBoard->render();
 }
 
 
@@ -354,6 +380,11 @@ void Game::move(DIR dir)
 {
     storeBoard(); // backup the current board to compare
 
+    if (mWin && mWon)
+    {
+        mWin = false;
+    }
+
     for (int i = 0; i < mSize; i++)
     {
         for (int j = 0; j < mSize; j++)
@@ -403,11 +434,15 @@ void Game::move(DIR dir)
         }
     }
 
-    printf("Player's score: %d\n", mScoreBoard->getPoint());
-
-    if (noMove())
+    for (int i = 0; i < mSize; i++)
     {
-        gameOver();
+        for (int j = 0 ; j < mSize; j++)
+        {
+            if (mBlock[i][j] != nullptr && mBlock[i][j]->get_value() == 2048 && !mWon)
+            {
+                win();
+            }
+        }
     }
 
     if (gridChanged())
@@ -415,23 +450,14 @@ void Game::move(DIR dir)
         addRandomBlock();
     }
 
-//    for (int i = 0; i < 4; i++)
-//    {
-//        for (int j = 0; j < 4; j++)
-//        {
-//            if (mBlock[i][j] != nullptr)
-//                printf("%d ", mBlock[i][j]->get_value());
-//            else
-//                printf("0 ");
-//        }
-//        printf("\n");
-//    }
-//    printf("\n");
+    if (noMove())
+    {
+        gameOver();
+    }
 }
 
 void Game::update(int delta_ms)
 {
-    //printf("update every time\n");
     for (int i = 0; i < mSize; i++)
     {
         for (int j = 0; j < mSize; j++)

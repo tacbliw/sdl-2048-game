@@ -18,7 +18,7 @@
  *  Each frame, we just have to read the attributes directly from the map, which is O(1).
  */
 
-#define MAX_BLOCK_VALUE 65536
+#define MAX_BLOCK_VALUE 999999
 
 struct blockStyle
 {
@@ -203,8 +203,6 @@ std::shared_ptr<Animation> makeMoveAnimation(Block* block, int row1, int col1, i
         animation->add(0, y1);
         animation->add(100, y2);
     }
-
-    //printf("make move!!\n");
     return animation;
 }
 
@@ -241,7 +239,6 @@ Block::Block(int row, int col, int value)
     this->row = row;
     this->col = col;
     this->value = value;
-    loadBlockMetadata();
     calPosFromXY(row, col, &mX, &mY);
     mTextInBlockTexture = new Texture();
     mBlockTexture = new Texture();
@@ -254,12 +251,23 @@ Block::Block(int row, int col, int value)
     mBlockTexture->setAsRenderTarget();
     gRender.setDrawColor(getBlockBackgroundColor(value));
     gRender.clear();
-    mTextInBlockTexture->render((blockSize - mTextInBlockTexture->getWidth())/2, (blockSize - mTextInBlockTexture->getHeight())/2, NULL);
+    mTextInBlockTexture->render((blockSize - mTextInBlockTexture->getWidth())/2,
+                                (blockSize - mTextInBlockTexture->getHeight())/2,
+                                NULL
+                                );
 
     gRender.setRenderTarget(NULL);
     mergeFrom1 = nullptr;
     mergeFrom2 = nullptr;
     mAnimation = nullptr;
+}
+
+Block::~Block()
+{
+    if (mTextInBlockTexture != NULL)
+        delete mTextInBlockTexture;
+    if (mBlockTexture != NULL)
+        delete mBlockTexture;
 }
 
 /** @brief Render block
