@@ -3,6 +3,7 @@
 #include <Block.h>
 #include <BlockBoard.h>
 #include <ScoreBoard.h>
+#include <HighScoreBoard.h>
 #include <vector>
 
 /** @brief Direction
@@ -49,6 +50,7 @@ class Game
         friend class BlockBoard;
         BlockBoard *mBlockBoard;
         ScoreBoard *mScoreBoard;
+        HighScoreBoard *mHighScoreBoard;
         bool mGameOver;
         bool mWin, mWon;
 

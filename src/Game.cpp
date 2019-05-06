@@ -36,6 +36,7 @@ void Game::init(int size)
     int middle = 100 * mSize + 15 * (mSize + 1);
     mBlockBoard = new BlockBoard(this, (SCREEN_WIDTH - middle)/2, (SCREEN_HEIGHT - middle)/2);
     mScoreBoard = new ScoreBoard("Score", (SCREEN_WIDTH - middle)/2 + mBlockBoard->getWidth() - 100, 20);
+    mHighScoreBoard = new HighScoreBoard("High Score", (SCREEN_WIDTH - middle)/2 + mBlockBoard->getWidth() - 220, 20);
 
     mBlock = blankGrid();
     previousMBlock = std::vector< std::vector<int> > (mSize, std::vector<int>(mSize, 0));
@@ -232,6 +233,7 @@ void Game::render()
 {
     mBlockBoard->render();
     mScoreBoard->render();
+//    mHighScoreBoard->render();
 }
 
 
@@ -252,6 +254,7 @@ void Game::moveVer(int x, int y, int d)
 
 		// adding score
 		mScoreBoard->addPoint(mBlock[x + d][y]->get_value());
+
 
 		mBlock[x + d][y]->mergeFrom1 = f;
 		mBlock[x + d][y]->mergeFrom2 = l;
@@ -454,6 +457,11 @@ void Game::move(DIR dir)
     {
         gameOver();
     }
+
+//    if (mScoreBoard->getPoint() > mHighScoreBoard->getHighScore())
+//    {
+//        mHighScoreBoard->setHighScore(mScoreBoard->getPoint());
+//    }
 }
 
 void Game::update(int delta_ms)

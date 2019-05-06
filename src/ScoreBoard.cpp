@@ -88,4 +88,6 @@ void ScoreBoard::render()
 
     gRender.setRenderTarget(NULL);
     mTexture->render(mPosition.x, mPosition.y);
+
+    delete mPointTexture;
 }
