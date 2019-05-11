@@ -42,7 +42,6 @@ int main( int argc, char * argv[] )
         newGameBtn->setCallBackFunc( [=] { g->newGame(); } );
         newGameBtn->setPosition((SCREEN_WIDTH - g->getBlockBoard()->getWidth()) / 2, 25);
 
-
         bool quit = false;
         SDL_Event e;
         Uint32 ticks = SDL_GetTicks();
