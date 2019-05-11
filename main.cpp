@@ -12,6 +12,7 @@
 #include "Game.h"
 #include "Button.h"
 #include "ScoreBoard.h"
+#include "HighScoreBoard.h"
 
 int main( int argc, char * argv[] )
 {
@@ -28,6 +29,7 @@ int main( int argc, char * argv[] )
         loadButtonMetadata();
         loadScoreBoardMetadata();
         loadBlockBoardMetadata();
+        loadHighScoreBoardMetadata();
 
         gRender.setDrawColor({255, 255, 255});
         gRender.clear();
@@ -39,7 +41,6 @@ int main( int argc, char * argv[] )
         Button *newGameBtn = new Button("New game");
         newGameBtn->setCallBackFunc( [=] { g->newGame(); } );
         newGameBtn->setPosition((SCREEN_WIDTH - g->getBlockBoard()->getWidth()) / 2, 25);
-
 
         bool quit = false;
         SDL_Event e;
