@@ -10,6 +10,8 @@ const SDL_Color BLOCKBOARD_BACKGROUND_COLOR = {0xBB, 0xAD, 0xA0};
 const SDL_Color BLOCKBOARD_HOLDER_COLOR = {238, 228, 218, 125};
 const SDL_Color BLOCKBOARD_GAMEOVER_MASK_COLOR = {238, 228, 218, static_cast<int>(0.5 * 255)};
 const SDL_Color BLOCKBOARD_GAMEOVER_TEXT_COLOR = { 0x77, 0x6E, 0x65, 0xFF };
+const SDL_Color BLOCKBOARD_WIN_TEXT_COLOR = { 0xFF, 0xFF, 0xFF, 0xFF };
+const SDL_Color BLOCKBOARD_WIN_MASK_COLOR = {240, 190, 50, static_cast<int>(0.5 * 255)};
 
 
 extern void loadBlockBoardMetadata()
@@ -92,6 +94,25 @@ void BlockBoard::render()
         gameOverMask->render(mX, mY);
         delete gameOverMask;
         delete gameOverText;
+    }
+
+    if (m_pGame->mWin)
+    {
+        Texture *winMask = new Texture();
+        Texture *winText = new Texture();
+        winText->loadTextureFromText(&gameOverFont, "YOU WIN!!!", BLOCKBOARD_WIN_TEXT_COLOR);
+
+        winMask->createBlankTexture(SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, gridSize, gridSize);
+        winMask->setBlendMode();
+        winMask->setAsRenderTarget();
+        gRender.setDrawColor(BLOCKBOARD_WIN_MASK_COLOR);
+        gRender.clear();
+        winText->render((gridSize - winText->getWidth())/2, (gridSize - winText->getHeight())/2);
+
+        gRender.setRenderTarget(NULL);
+        winMask->render(mX, mY);
+        delete winMask;
+        delete winText;
     }
 
     // test
