@@ -5,6 +5,7 @@
 
 extern const int  SCREEN_WIDTH;
 extern const int  SCREEN_HEIGHT;
+extern const SDL_Color BACKGROUND_COLOR;
 
 extern bool InitSDL();
 extern void CloseSDL();

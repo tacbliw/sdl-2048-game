@@ -4,8 +4,8 @@
 #include "Render.h"
 
 static Font btnFont;
-
-
+const SDL_Color BUTTON_TEXT_COLOR = { 0xF9, 0xF6, 0xF2, 0xFF };
+const SDL_Color BUTTON_BACKGROUND_COLOR = { 0x8F, 0x7A, 0x66, 0xFF };
 extern void loadButtonMetadata()
 {
     const char *fontFile = "Fonts/OpenSans-Bold.ttf";
@@ -23,12 +23,12 @@ Button::Button(const char *_text, int _x, int _y, int _w, int _h)
     mTextTexture = new Texture();
     mTexture = new Texture();
 
-    mTextTexture->loadTextureFromText(&btnFont, mText, { 0xF9, 0xF6, 0xF2, 0xFF });
+    mTextTexture->loadTextureFromText(&btnFont, mText, BUTTON_TEXT_COLOR);
 
 
     mTexture->createBlankTexture(SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mWidth, mHeight);
     mTexture->setAsRenderTarget();
-    gRender.setDrawColor({ 0x8F, 0x7A, 0x66, 0xFF });
+    gRender.setDrawColor(BUTTON_BACKGROUND_COLOR);
     gRender.clear();
     mTextTexture->render((mTexture->getWidth() - mTextTexture->getWidth())/2, (mTexture->getHeight() - mTextTexture->getHeight())/2, NULL);
 

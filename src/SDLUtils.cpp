@@ -7,6 +7,7 @@
 
 extern const int  SCREEN_WIDTH = 700;
 extern const int SCREEN_HEIGHT = 640;
+extern const SDL_Color BACKGROUND_COLOR = {255, 255, 255};
 
 static SDL_Window *gWindow = NULL;
 static SDL_Renderer *gRenderer = NULL;

@@ -12,6 +12,9 @@
 #include "Game.h"
 #include "Button.h"
 #include "ScoreBoard.h"
+#include "HighScoreBoard.h"
+
+const int SIZE = 4;
 
 int main( int argc, char * argv[] )
 {
@@ -28,11 +31,12 @@ int main( int argc, char * argv[] )
         loadButtonMetadata();
         loadScoreBoardMetadata();
         loadBlockBoardMetadata();
+        loadHighScoreBoardMetadata();
 
-        gRender.setDrawColor({255, 255, 255});
+        gRender.setDrawColor(BACKGROUND_COLOR);
         gRender.clear();
         Game *g = new Game;
-        g->init(4);
+        g->init(SIZE);
         g->render();
         gRender.present();
 
@@ -76,7 +80,7 @@ int main( int argc, char * argv[] )
             Uint32 new_ticks = SDL_GetTicks();
             int delta_ms = new_ticks - ticks;
             ticks = new_ticks;
-            gRender.setDrawColor({255, 255, 255});
+            gRender.setDrawColor(BACKGROUND_COLOR);
             gRender.clear();
             g->render();
             newGameBtn->render();

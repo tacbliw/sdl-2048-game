@@ -21,7 +21,7 @@ class Animation
             double value;
         };
         Animation(int duration, Block* blockTarget): mDuration(duration), mBlockTarget(blockTarget), mElapsed(0), mAlive(true) {}
-
+        ~Animation();
         void add(int percent, double value);//
 
         double calculate(int elapsed, int duration);

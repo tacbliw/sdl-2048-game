@@ -48,7 +48,7 @@ void fontFree()
 }
 
 // ============== COLOR =================
-SDL_Color backgroundColors[] = {
+const SDL_Color backgroundColors[] = {
     {240, 230, 215}, // 2
     {240, 225, 200}, // 4
     {240, 177, 120}, // 8
@@ -175,13 +175,13 @@ void initBlockStyle()
  * @return nothing, but change *x and *y to the right number.
  *
  */
-int blockSize = 100;
-int gridSpacing = 15;
+int BLOCK_SIZE = 100;
+int GRID_SPACING = 15;
 
 void calPosFromXY(int row, int col, int *x, int *y)
 {
-    *x = col * (blockSize + gridSpacing);
-    *y = row * (blockSize + gridSpacing);
+    *x = col * (BLOCK_SIZE + GRID_SPACING);
+    *y = row * (BLOCK_SIZE + GRID_SPACING);
 }
 
 std::shared_ptr<Animation> makeMoveAnimation(Block* block, int row1, int col1, int row2, int col2)
@@ -249,12 +249,12 @@ Block::Block(int row, int col, int value)
     std::stringstream ss;
     ss << value;
     mTextInBlockTexture->loadTextureFromText(getBlockTextFont(value), ss.str().c_str(), getBlockTextColor(value));
-    mBlockTexture->createBlankTexture(SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, blockSize, blockSize);
+    mBlockTexture->createBlankTexture(SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BLOCK_SIZE, BLOCK_SIZE);
 
     mBlockTexture->setAsRenderTarget();
     gRender.setDrawColor(getBlockBackgroundColor(value));
     gRender.clear();
-    mTextInBlockTexture->render((blockSize - mTextInBlockTexture->getWidth())/2, (blockSize - mTextInBlockTexture->getHeight())/2, NULL);
+    mTextInBlockTexture->render((BLOCK_SIZE - mTextInBlockTexture->getWidth())/2, (BLOCK_SIZE - mTextInBlockTexture->getHeight())/2, NULL);
 
     gRender.setRenderTarget(NULL);
     mergeFrom1 = nullptr;

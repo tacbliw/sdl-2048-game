@@ -1,6 +1,11 @@
 #include "Animation.h"
 #include "Block.h"
 
+Animation::~Animation()
+{
+    mElapsed = 0;
+    progress(mDuration);
+}
 
 double Animation::calculate(int elapsed, int duration)
 {

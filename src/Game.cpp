@@ -8,8 +8,6 @@
 #include <time.h>
 #include "SDLUtils.h"
 
-
-
 struct Position {int row; int col;};
 
 Game::Game()
@@ -36,6 +34,7 @@ void Game::init(int size)
     int middle = 100 * mSize + 15 * (mSize + 1);
     mBlockBoard = new BlockBoard(this, (SCREEN_WIDTH - middle)/2, (SCREEN_HEIGHT - middle)/2);
     mScoreBoard = new ScoreBoard("Score", (SCREEN_WIDTH - middle)/2 + mBlockBoard->getWidth() - 100, 20);
+    mHighScoreBoard = new HighScoreBoard("High Score", (SCREEN_WIDTH - middle)/2 + mBlockBoard->getWidth() - 220, 20);
 
     mBlock = blankGrid();
     previousMBlock = std::vector< std::vector<int> > (mSize, std::vector<int>(mSize, 0));
@@ -181,6 +180,8 @@ void Game::addRandomBlock()
 void Game::newGame()
 {
     mGameOver = false;
+    mWin = false;
+    mWon = false;
     mBlock = blankGrid();
     mScoreBoard->resetPoint();
 
@@ -198,6 +199,12 @@ void Game::gameOver()
     mGameOver = true;
 }
 
+void Game::win()
+{
+    mWin = true;
+    mWon = true;
+}
+
 // ==============  RENDER =====================
 /** @brief Render board game
  *
@@ -208,6 +215,7 @@ void Game::render()
 {
     mBlockBoard->render();
     mScoreBoard->render();
+    mHighScoreBoard->render();
 }
 
 
@@ -356,6 +364,12 @@ void Game::move(DIR dir)
 {
     storeBoard(); // backup the current board to compare
 
+    if (mWin && mWon)
+    {
+        mWin = false;
+    }
+
+
     for (int i = 0; i < mSize; i++)
     {
         for (int j = 0; j < mSize; j++)
@@ -405,6 +419,17 @@ void Game::move(DIR dir)
         }
     }
 
+    for (int i = 0; i < mSize; i++)
+    {
+        for (int j = 0 ; j < mSize; j++)
+        {
+            if (mBlock[i][j] != nullptr && mBlock[i][j]->get_value() == 2048 && !mWon)
+            {
+                win();
+            }
+        }
+    }
+
 
 
     //printf("Player's score: %d\n", mScoreBoard->getPoint());
@@ -420,18 +445,11 @@ void Game::move(DIR dir)
         addRandomBlock();
     }
 
-//    for (int i = 0; i < 4; i++)
-//    {
-//        for (int j = 0; j < 4; j++)
-//        {
-//            if (mBlock[i][j] != nullptr)
-//                printf("%d ", mBlock[i][j]->get_value());
-//            else
-//                printf("0 ");
-//        }
-//        printf("\n");
-//    }
-//    printf("\n");
+    if (mScoreBoard->getPoint() > mHighScoreBoard->getHighScore())
+    {
+        mHighScoreBoard->setHighScore(mScoreBoard->getPoint());
+        mHighScoreBoard->saveHighScore();
+    }
 }
 
 void Game::update(int delta_ms)

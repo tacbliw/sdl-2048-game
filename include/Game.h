@@ -4,6 +4,7 @@
 #include <BlockBoard.h>
 #include <ScoreBoard.h>
 #include <vector>
+#include <HighScoreBoard.h>
 
 /** @brief Direction
  */
@@ -28,6 +29,7 @@ class Game
         void addRandomBlock();
         void gameOver();
         void newGame();
+        void win();
 
         //
         BlockBoard* getBlockBoard() { return mBlockBoard; }
@@ -47,7 +49,9 @@ class Game
         friend class BlockBoard;
         BlockBoard *mBlockBoard;
         ScoreBoard *mScoreBoard;
+        HighScoreBoard *mHighScoreBoard;
         bool mGameOver;
+        bool mWin, mWon;
 
         // gameplay functions
         void up();

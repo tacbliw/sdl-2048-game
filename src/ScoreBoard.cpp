@@ -2,6 +2,11 @@
 #include <sstream>
 #include "Render.h"
 
+
+const SDL_Color SCOREBOARD_TITLE_COLOR = { 0xF9, 0xF6, 0xF2, 0xFF };
+const SDL_Color SCOREBOARD_POINT_COLOR = { 0xF9, 0xF6, 0xF2, 0xFF };
+const SDL_Color SCOREBOARD_BACKGROUND_COLOR = { 0xBB, 0xAD, 0xA0 };
+
 static Font scoreBoardFont;
 
 extern void loadScoreBoardMetadata()
@@ -26,15 +31,15 @@ ScoreBoard::ScoreBoard(const char *_title, int _x, int _y, int _w, int _h)
     mTexture = new Texture();
     mPointTexture = new Texture();
 
-    mTextTexture->loadTextureFromText(&scoreBoardFont, mTitle, { 0xF9, 0xF6, 0xF2, 0xFF });
+    mTextTexture->loadTextureFromText(&scoreBoardFont, mTitle, SCOREBOARD_TITLE_COLOR);
     std::stringstream ss;
     ss << mPoint;
-    mPointTexture->loadTextureFromText(&scoreBoardFont, ss.str().c_str(), { 0xF9, 0xF6, 0xF2, 0xFF });
+    mPointTexture->loadTextureFromText(&scoreBoardFont, ss.str().c_str(), SCOREBOARD_POINT_COLOR);
 
 
     mTexture->createBlankTexture(SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mWidth, mHeight);
     mTexture->setAsRenderTarget();
-    gRender.setDrawColor({ 0x8F, 0x7A, 0x66, 0xFF });
+    gRender.setDrawColor(SCOREBOARD_BACKGROUND_COLOR);
     gRender.clear();
 
 
@@ -67,10 +72,10 @@ void ScoreBoard::render()
 {
     std::stringstream ss;
     ss << mPoint;
-    mPointTexture->loadTextureFromText(&scoreBoardFont, ss.str().c_str(), { 0xFF, 0xFF, 0xFF, 0xFF });
+    mPointTexture->loadTextureFromText(&scoreBoardFont, ss.str().c_str(), SCOREBOARD_POINT_COLOR);
 
     mTexture->setAsRenderTarget();
-    gRender.setDrawColor({ 0xBB, 0xAD, 0xA0 });
+    gRender.setDrawColor(SCOREBOARD_BACKGROUND_COLOR);
     gRender.clear();
 
     mTextTexture->render((mTexture->getWidth() - mTextTexture->getWidth())/2, (mTexture->getHeight() - mTextTexture->getHeight())/4, NULL);
